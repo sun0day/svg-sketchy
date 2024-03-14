@@ -1,37 +1,62 @@
-//import {chromium, firefox, webkit} from 'playwright'
-//
-//async function launchBrowser() {
-//  const browser = await [firefox, webkit].reduce((promise, instance) => {
-//    return promise.catch(() => instance.launch())
-//  }, chromium.launch())
-//
-//  if(!browser) {
-//    throw new Error("unable to launch chromium, firefox or webkit, please make sure you have install one of them!!")
-//  }
-//  
-//  return browser
-//}
-//
-//(async () => {
-//  const browser = await launchBrowser(); 
-//  const page = await browser.newPage();
-//  const downloadPromise = page.waitForEvent('download');
-//  await page.goto('http://localhost:5174');
-//  const download = await downloadPromise;
-//  console.log(download.path())
-//  // other actions...
-//  await browser.close();
-//})();
 import pp, {type CDPSession} from 'puppeteer'
+import {fileURLToPath} from 'node:url';
+import {dirname, isAbsolute, join, normalize} from 'node:path'
+import fg, {isDynamicPattern} from 'fast-glob'
 
-let downloadCount = 0
+const cwd = process.cwd()
 
-async function waitUntilDownload(session: CDPSession, fileName = '') {
+export class Runner {
+  private root: string
+  private downloadPath: string
+  private svgFiles:string[] = [];
+  private htmlPath = join(__dirname  ?? dirname(fileURLToPath(import.meta.url)), 'index.html')
+
+  constructor(
+    {
+      root = cwd,
+      target = "*.svg",
+        downloadPath = cwd 
+    }: {
+      root?: string,
+      target?: string,
+    downloadPath?: string
+    } = {}
+  ) {
+    this.parseSvgFiles(target)
+  }
+
+
+  private parseSvgFiles(target: string)  {
+    this.svgFiles = target.split(" ").reduce((files, pattern) => {
+      if(isDynamicPattern(pattern)) {
+        files.push(...fg.sync(this.resolveAbsPath(pattern), {onlyFiles: true}))
+      } else {
+        files.push(this.resolveAbsPath(pattern))
+      }
+      return files 
+    }, [] as string[])
+    
+  }
+
+  private resolveAbsPath(path: string) {
+    return isAbsolute(path) ? path : join(this.root, path)
+  }
+
+  private slashPath(path: string) {
+    return normalize(path).replace(/\\/g, '/')
+  }
+
+  private getFileProtocol(path: string) {
+    return 'file://' + this.slashPath(path)
+  }
+
+ private async waitUntilDownload(session: CDPSession) {
+    let downloadCount = 0
     return new Promise((resolve, reject) => {
                       session.on('Browser.downloadWillBegin', ()=>{
               downloadCount ++  
             });
-        session.on('Browser.downloadProgress', e => { // or 'Browser.downloadProgress'
+        session.on('Browser.downloadProgress', e => { 
             if (e.state === 'completed' || e.state === 'canceled') {
               downloadCount--
             }
@@ -42,27 +67,30 @@ async function waitUntilDownload(session: CDPSession, fileName = '') {
     });
 }
 
-(async () => {
-  const browser = await pp.launch({ headless: true });
+  async run() {
+const browser = await pp.launch({ headless: true });
   const session = await browser.target().createCDPSession()
 
   await session.send('Browser.setDownloadBehavior', {
        behavior: 'allow',
-       downloadPath: process.cwd(),
+       downloadPath: this.downloadPath, 
        eventsEnabled: true
    });
 
   const page = await browser.newPage();
-  const navigation = page.goto('http://localhost:5174');
+  const navigation = page.goto(this.getFileProtocol(this.htmlPath));
 
-  const downloadProgress = waitUntilDownload(session) 
+  const downloadProgress = this.waitUntilDownload(session) 
 
    await navigation
-   console.log('ddddddd')
     
   await downloadProgress 
 
-   console.log('xxxxxxx')
-
    await browser.close()
-})()
+
+}
+}
+
+new Runner() 
+
+
