@@ -1,7 +1,6 @@
 import pp, {type CDPSession} from 'puppeteer'
-import {fileURLToPath} from 'node:url';
-import {basename, dirname, isAbsolute, join, normalize} from 'node:path'
-import {readFile, writeFile} from 'node:fs/promises'
+import {basename, isAbsolute, join} from 'node:path'
+import {readFile} from 'node:fs/promises'
 import fg, {isDynamicPattern} from 'fast-glob'
 
 const cwd = process.cwd()
@@ -13,7 +12,6 @@ export class Runner {
   private downloadPath: string
   private svgFiles:string[] = [];
   private clientPath: string = require?.resolve ? require.resolve(clientEntry) : import.meta.resolve(clientEntry)
-  private htmlPath = join(__dirname  ?? dirname(fileURLToPath(import.meta.url)), 'index.html')
   private htmlHead = Buffer.from(`
 <!doctype html>
 <html lang="en">
@@ -57,15 +55,7 @@ export class Runner {
     return isAbsolute(path) ? path : join(this.root, path)
   }
 
-  private slashPath(path: string) {
-    return normalize(path).replace(/\\/g, '/')
-  }
-
-  private getFileProtocol(path: string) {
-    return 'file://' + this.slashPath(path)
-  }
-
-  private async writeHtml() {
+  private async computeHtml() {
     const [clientJs, ...svgs] = await Promise.all([readFile(this.clientPath), ...this.svgFiles.map(file => readFile(file))])
     const scriptOpenTag = 
       Buffer.from("<script>")
@@ -84,8 +74,7 @@ export class Runner {
       scriptCloseTag,
       Buffer.from("</body></html>")
     ])
-
-    return writeFile(this.htmlPath, htmlBuf)
+  return htmlBuf
   }
 
  private async waitUntilDownload(session: CDPSession) {
@@ -106,7 +95,7 @@ export class Runner {
 }
 
   async run() {
-const [browser] = await Promise.all([pp.launch({ headless: true }), this.writeHtml()]);
+const [browser, htmlBuf] = await Promise.all([pp.launch({ headless: true }), this.computeHtml()]);
   const session = await browser.target().createCDPSession()
 
   await session.send('Browser.setDownloadBehavior', {
@@ -116,7 +105,7 @@ const [browser] = await Promise.all([pp.launch({ headless: true }), this.writeHt
    });
 
   const page = await browser.newPage();
-  const navigation = page.goto(this.getFileProtocol(this.htmlPath));
+  const navigation = page.setContent(htmlBuf!.toString())
   const downloadProgress = this.waitUntilDownload(session) 
 
    await navigation
