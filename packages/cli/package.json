@@ -3,12 +3,21 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "exports":{
+    ".": {
+      "default": {
+        "require": "./index.cjs",
+        "default": "./index.js"
+      }
+    }
+  },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup"
   },
   "dependencies": {
-    "puppeteer": "^22.4.1"
+    "puppeteer": "^22.4.1",
+    "svg-sketchy.client": "workspace: *"
   },
   "devDependencies": {
     "commander": "^12.0.0",

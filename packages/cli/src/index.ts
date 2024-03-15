@@ -1,15 +1,28 @@
 import pp, {type CDPSession} from 'puppeteer'
 import {fileURLToPath} from 'node:url';
-import {dirname, isAbsolute, join, normalize} from 'node:path'
+import {basename, dirname, isAbsolute, join, normalize} from 'node:path'
+import {readFile, writeFile} from 'node:fs/promises'
 import fg, {isDynamicPattern} from 'fast-glob'
 
 const cwd = process.cwd()
+const clientEntry = "svg-sketchy.client/dist/svg-sketchy.iife.js"
+const svgReg = /\.svg$/g
 
 export class Runner {
   private root: string
   private downloadPath: string
   private svgFiles:string[] = [];
+  private clientPath: string = require?.resolve ? require.resolve(clientEntry) : import.meta.resolve(clientEntry)
   private htmlPath = join(__dirname  ?? dirname(fileURLToPath(import.meta.url)), 'index.html')
+  private htmlHead = Buffer.from(`
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Svg Sketchy </title>
+  </head>
+  <body>`)
 
   constructor(
     {
@@ -22,6 +35,8 @@ export class Runner {
     downloadPath?: string
     } = {}
   ) {
+    this.root = root
+    this.downloadPath = downloadPath
     this.parseSvgFiles(target)
   }
 
@@ -50,6 +65,29 @@ export class Runner {
     return 'file://' + this.slashPath(path)
   }
 
+  private async writeHtml() {
+    const [clientJs, ...svgs] = await Promise.all([readFile(this.clientPath), ...this.svgFiles.map(file => readFile(file))])
+    const scriptOpenTag = 
+      Buffer.from("<script>")
+    const scriptCloseTag = 
+      Buffer.from("</script>")
+
+   const htmlBuf =  Buffer.concat([
+      this.htmlHead,
+      ...svgs,
+      scriptOpenTag,
+      Buffer.from("window.SVG_FILES=[" + this.svgFiles.map(file => 
+                                                           `"${basename(file).replace(svgReg, '.sketch.svg')}"`) + "]"),
+      scriptCloseTag,
+      scriptOpenTag,
+      clientJs,
+      scriptCloseTag,
+      Buffer.from("</body></html>")
+    ])
+
+    return writeFile(this.htmlPath, htmlBuf)
+  }
+
  private async waitUntilDownload(session: CDPSession) {
     let downloadCount = 0
     return new Promise((resolve, reject) => {
@@ -68,7 +106,7 @@ export class Runner {
 }
 
   async run() {
-const browser = await pp.launch({ headless: true });
+const [browser] = await Promise.all([pp.launch({ headless: true }), this.writeHtml()]);
   const session = await browser.target().createCDPSession()
 
   await session.send('Browser.setDownloadBehavior', {
@@ -79,11 +117,9 @@ const browser = await pp.launch({ headless: true });
 
   const page = await browser.newPage();
   const navigation = page.goto(this.getFileProtocol(this.htmlPath));
-
   const downloadProgress = this.waitUntilDownload(session) 
 
    await navigation
-    
   await downloadProgress 
 
    await browser.close()
@@ -91,6 +127,6 @@ const browser = await pp.launch({ headless: true });
 }
 }
 
-new Runner() 
+new Runner().run()
 
 

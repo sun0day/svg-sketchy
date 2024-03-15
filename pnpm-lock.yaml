@@ -13,6 +13,9 @@ importers:
       puppeteer:
         specifier: ^22.4.1
         version: 22.4.1
+      svg-sketchy.client:
+        specifier: 'workspace: *'
+        version: link:../client
     devDependencies:
       commander:
         specifier: ^12.0.0
