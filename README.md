@@ -1,4 +1,3 @@
-<p align="center"><img width="214" alt="image" src="https://github.com/sun0day/svg-sketchy/assets/102238922/ccf5837a-e462-42c1-a182-afaf54732773"></p>
+<p align="center"><img width="214" alt="image" src="https://github.com/sun0day/svg-sketchy/assets/102238922/fabd88bb-478e-475b-bdb6-976b4ddc5d22"></p>
 
-# svg-sketchy
-A Nodejs cli-tool to sketch svg.
+<p align="center"> A Nodejs cli-tool to sketch svg.</p>
