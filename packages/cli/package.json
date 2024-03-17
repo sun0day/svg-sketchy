@@ -3,11 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "CLI to sketch svg",
   "exports":{
     ".": {
       "default": {
-        "require": "./index.cjs",
-        "default": "./index.js"
+        "require": "./runner.cjs",
+        "default": "./runner.js"
       }
     }
   },

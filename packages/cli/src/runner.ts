@@ -1,13 +1,14 @@
 import {basename, isAbsolute, join} from 'node:path';
 import {readFile} from 'node:fs/promises';
-import EventEmitter from 'node:events'
+import EventEmitter from 'node:events';
 import pp, {type CDPSession} from 'puppeteer';
 import fg, {isDynamicPattern} from 'fast-glob';
 
 const cwd = process.cwd();
 const clientEntry = "svg-sketchy.client/dist/svg-sketchy.iife.js";
 const svgReg = /\.svg$/g;
-const svgSketExt = ".sket.svg"
+export const svgExt = ".svg";
+export const svgSketExt = ".sket.svg";
 
 export enum RunnerEventName {
   DOWNLOAD_START = 'download_start',
@@ -17,7 +18,7 @@ export enum RunnerEventName {
 
 export class Runner extends EventEmitter {
   private root: string;
-  private downloadPath: string;
+  private output: string;
   private svgFiles:string[] = [];
   private clientPath: string = require?.resolve ? require.resolve(clientEntry) : import.meta.resolve(clientEntry);
   private htmlHead = Buffer.from(`
@@ -34,16 +35,16 @@ export class Runner extends EventEmitter {
     {
       root = cwd,
       target = "*.svg",
-      downloadPath = cwd 
+      output = cwd 
     }: {
       root?: string,
       target?: string,
-      downloadPath?: string
+      output?: string
     } = {}
   ) {
-    super()
+    super();
     this.root = root;
-    this.downloadPath = downloadPath;
+    this.output = output;
     this.parseSvgFiles(target);
   }
 
@@ -59,7 +60,7 @@ export class Runner extends EventEmitter {
     }, [] as string[]);
 
     if(this.svgFiles.length < 1) {
-      throw new Error(`No svg files found!`)
+      throw new Error(`No svg files found!`);
     }    
   }
 
@@ -86,24 +87,38 @@ export class Runner extends EventEmitter {
       scriptCloseTag,
       Buffer.from("</body></html>")
     ]);
+
     return htmlBuf;
   }
 
   private async waitUntilDownload(session: CDPSession) {
-    const downloadingSvgs = {}
+    const downloadingSvgs = {};
+    session.off("Browser.downloadWillBegin");
+    session.off("Browser.downloadProgress");
+
     return new Promise((resolve) => {
       session.on('Browser.downloadWillBegin', (e)=>{
-        this.emit(RunnerEventName.DOWNLOAD_START, e.suggestedFilename)
-        downloadingSvgs[e.guid] = e.suggestedFilename
+        this.emit(RunnerEventName.DOWNLOAD_START, e.suggestedFilename);
+        downloadingSvgs[e.guid] = e.suggestedFilename;
       });
       session.on('Browser.downloadProgress', e => {
-        const isCompleted = e.state === 'completed'
-        const isCanceled = e.state === 'canceled' 
+        const isCompleted = e.state === 'completed';
+        const isCanceled = e.state === 'canceled'; 
+
         if(isCompleted || isCanceled) {
-          const downloadFileName = downloadingSvgs[e.guid].suggestedFilename
-          delete downloadingSvgs[e.guid] 
-          this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, downloadFileName)
+          const downloadFileName = downloadingSvgs[e.guid];
+          delete downloadingSvgs[e.guid]; 
+          this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, downloadFileName);
+
+          if(isCompleted) {
+            this.svgFiles.splice(
+              this.svgFiles.findIndex(
+                svg => svg.indexOf(downloadFileName.replace(svgSketExt, svgExt)) > -1
+              ), 
+              1);
+          }
         }
+
         if(Object.keys(downloadingSvgs).length === 0) {
           resolve(true);
         }
@@ -112,26 +127,31 @@ export class Runner extends EventEmitter {
   }
 
   async run() {
-    const [browser, htmlBuf] = await Promise.all([pp.launch({ headless: true }), this.computeHtml()]);
+    const browser = await pp.launch({ headless: true });
     const session = await browser.target().createCDPSession();
 
     await session.send('Browser.setDownloadBehavior', {
       behavior: 'allow',
-      downloadPath: this.downloadPath, 
+      downloadPath : this.output, 
       eventsEnabled: true
     });
 
-    const page = await browser.newPage();
-    const navigation = page.setContent(htmlBuf!.toString());
-    const downloadProgress = this.waitUntilDownload(session); 
 
-    await navigation;
-    await downloadProgress; 
+    while(this.svgFiles.length) {
+      const page = await browser.newPage();
+      const htmlBuf = await this.computeHtml();
+      const navigation = page.setContent(htmlBuf!.toString());
+      const downloadProgress = this.waitUntilDownload(session); 
+
+      await navigation;
+      await downloadProgress; 
+      page.close();
+    } 
+
 
     await browser.close();
   }
 }
 
-new Runner().run();
 
 
