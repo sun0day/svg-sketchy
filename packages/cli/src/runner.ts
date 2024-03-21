@@ -1,4 +1,5 @@
-import {basename, isAbsolute, join} from 'node:path';
+import {basename,dirname, isAbsolute, join} from 'node:path';
+import { lstatSync } from 'node:fs';
 import {readFile} from 'node:fs/promises';
 import EventEmitter from 'node:events';
 import pp, {type CDPSession} from 'puppeteer';
@@ -7,8 +8,7 @@ import fg, {isDynamicPattern} from 'fast-glob';
 const cwd = process.cwd();
 const clientEntry = "svg-sketchy.client/dist/svg-sketchy.iife.js";
 const svgReg = /\.svg$/g;
-export const svgExt = ".svg";
-export const svgSketExt = ".sket.svg";
+const svgNameReg = /\[name\]/;
 
 export enum RunnerEventName {
   DOWNLOAD_START = 'download_start',
@@ -18,8 +18,10 @@ export enum RunnerEventName {
 
 export class Runner extends EventEmitter {
   private root: string;
-  private output: string;
+  private outputDir: string;
+  private outputFileName: string = "[name].svg";
   private svgFiles:string[] = [];
+  private svgOutputFiles: string[] = [];
   private clientPath: string = require?.resolve ? require.resolve(clientEntry) : import.meta.resolve(clientEntry);
   private htmlHead = Buffer.from(`
 <!doctype html>
@@ -43,11 +45,22 @@ export class Runner extends EventEmitter {
     } = {}
   ) {
     super();
+
     this.root = root;
-    this.output = output;
+    this.parseOutput(output);
     this.parseSvgFiles(target);
   }
 
+  private parseOutput(output: string) {
+    const absOutput = isAbsolute(output) ? output : join(this.root, output);
+    const fileName = basename(absOutput)
+    if(svgReg.test(fileName)) {
+      this.outputDir = dirname(absOutput)
+      this.outputFileName = fileName
+    } else {
+      this.outputDir = absOutput
+    }
+  }
 
   private parseSvgFiles(target: string)  {
     this.svgFiles = target.split(" ").reduce((files, pattern) => {
@@ -62,6 +75,11 @@ export class Runner extends EventEmitter {
     if(this.svgFiles.length < 1) {
       throw new Error(`No svg files found!`);
     }    
+
+    this.svgOutputFiles = this.svgFiles.map(filePath => {
+      const fileName = basename(filePath);
+      return this.outputFileName.replace(svgNameReg, () => fileName.replace(svgReg, "")); 
+    });
   }
 
   private resolveAbsPath(path: string) {
@@ -79,8 +97,7 @@ export class Runner extends EventEmitter {
       this.htmlHead,
       ...svgs,
       scriptOpenTag,
-      Buffer.from("window.SVG_FILES=[" + this.svgFiles.map(file => 
-        `"${basename(file).replace(svgReg, svgSketExt)}"`) + "]"),
+      Buffer.from("window.SVG_FILES=[" + this.svgOutputFiles.map(file => `"${file}"`) + "]"),
       scriptCloseTag,
       scriptOpenTag,
       clientJs,
@@ -101,6 +118,7 @@ export class Runner extends EventEmitter {
         this.emit(RunnerEventName.DOWNLOAD_START, e.suggestedFilename);
         downloadingSvgs[e.guid] = e.suggestedFilename;
       });
+
       session.on('Browser.downloadProgress', e => {
         const isCompleted = e.state === 'completed';
         const isCanceled = e.state === 'canceled'; 
@@ -108,14 +126,16 @@ export class Runner extends EventEmitter {
         if(isCompleted || isCanceled) {
           const downloadFileName = downloadingSvgs[e.guid];
           delete downloadingSvgs[e.guid]; 
-          this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, downloadFileName);
+          const index = this.svgOutputFiles.indexOf(downloadFileName);
+
+          this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
+            svg: this.svgFiles[index],
+            out: join(this.outputDir, downloadFileName)
+          });
 
           if(isCompleted) {
-            this.svgFiles.splice(
-              this.svgFiles.findIndex(
-                svg => svg.indexOf(downloadFileName.replace(svgSketExt, svgExt)) > -1
-              ), 
-              1);
+            this.svgFiles.splice(index, 1);
+            this.svgOutputFiles.splice(index, 1);
           }
         }
 
@@ -132,7 +152,7 @@ export class Runner extends EventEmitter {
 
     await session.send('Browser.setDownloadBehavior', {
       behavior: 'allow',
-      downloadPath : this.output, 
+      downloadPath : this.outputDir, 
       eventsEnabled: true
     });
 
@@ -144,7 +164,7 @@ export class Runner extends EventEmitter {
       const downloadProgress = this.waitUntilDownload(session); 
 
       await navigation;
-      await downloadProgress; 
+      await  downloadProgress; 
       page.close();
     } 
 

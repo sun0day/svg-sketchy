@@ -1,7 +1,7 @@
 import {Command} from 'commander';
 import ora from 'ora';
 import pkgJson from '../package.json';
-import {Runner, RunnerEventName, svgSketExt} from './runner';
+import {Runner, RunnerEventName} from './runner';
 
 const program = new Command();
 
@@ -20,16 +20,16 @@ program
       const start = performance.now();
       const spinner = ora('generating svg sketch...').start();
 
-      runner.on(RunnerEventName.DOWNLOAD_COMPLETED, svg => {
+      runner.on(RunnerEventName.DOWNLOAD_COMPLETED, ({svg, out}) => {
         svgCount++;
-        spinner.info(`${svg.replace(svgSketExt, ".svg")}  -> ${svg}`);
+        spinner.info(`${svg}  -> ${out}`);
       });
 
       runner.on(RunnerEventName.DOWNLOAD_FAIL, svg => {
         spinner.fail(`${svg} fail to sketch`);
       });  
 
-      await runner.run();
+      await  runner.run();
       
       console.log('\n');
       spinner.succeed(`total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms!`);
