@@ -53,14 +53,14 @@ jobs:
         with:
           path: .
       - name: List packages
-        run: ls -R packages/**
+        run: ls -R packages/**/dist
         shell: bash
       - name: Publish
         run: |
           npm config set provenance true
           npm config set access public
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks
+          pnpm --filter "{packages/**}" --access public --no-git-checks publish 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
