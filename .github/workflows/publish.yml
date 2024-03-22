@@ -11,26 +11,26 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: chore/ci
-    - uses: pnpm/action-setup@v3
-      with:
-        version: 10
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
-    - name: Install and build
-      run: pnpm install && pnpm build:all
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        path: |
-          .
-          !**/node_modules
-        if-no-files-found: error
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/ci
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install and build
+        run: pnpm install && pnpm build:all
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            .
+            !**/node_modules
+          if-no-files-found: error
 
   publish:
     name: Publish
