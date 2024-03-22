@@ -5,7 +5,8 @@ permissions:
   contents: write
   id-token: write
 'on':
-  - push
+  push:
+    branches: *
 
 jobs:
   build:
