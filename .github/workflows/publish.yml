@@ -22,6 +22,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+        run: node -v
       - name: Install and build
         run: pnpm install && pnpm build:all
       - name: Upload artifact
