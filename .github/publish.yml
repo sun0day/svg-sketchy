@@ -4,7 +4,7 @@ permissions:
   id-token: write
 'on':
   push:
-    branches: chore/ci
+    branches: 'chore/ci'
 
 jobs:
   build:
