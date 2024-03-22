@@ -53,7 +53,7 @@ jobs:
         with:
           path: .
       - name: List packages
-        run: cd artifacts && ls -R packages/**
+        run: cd artifact && ls -R packages/**
         shell: bash
       - name: Publish
         run: |
