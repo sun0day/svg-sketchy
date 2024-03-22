@@ -2,9 +2,10 @@ name: Publish
 permissions:
   contents: write
   id-token: write
-'on':
+on:
   push:
-    branches: 'chore/ci'
+    branches: 
+      - 'chore/ci'
 
 jobs:
   build:
