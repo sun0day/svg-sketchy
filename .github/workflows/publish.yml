@@ -53,7 +53,7 @@ jobs:
         with:
           path: .
       - name: List packages
-        run: ls -R packages/**/dist
+        run: ls -R **
         shell: bash
       - name: Publish
         run: |
