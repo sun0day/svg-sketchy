@@ -57,9 +57,13 @@ jobs:
       - name: Enter prerelease
         if: ${{ contains(github.ref, 'beta') }}
         run: pnpm changeset pre enter beta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Exit prerelease
         if: ${{ ! contains(github.ref, 'beta') }}
         run: pnpm changeset pre exit 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish 
         uses: changesets/action@v1
         with:
