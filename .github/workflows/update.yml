@@ -7,7 +7,7 @@ on:
 
 jobs:
   update_deps :
-    runs-on: ${{ matrix.host  }} 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with: 
