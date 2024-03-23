@@ -16,6 +16,9 @@
     "dev": "tsup --watch",
     "build": "tsup"
   },
+  "bin": {
+    "sket": "./dist/cmd.cjs"
+  },
   "dependencies": {
     "puppeteer": "^22.4.1",
     "svg-sketchy.client": "workspace: *"
