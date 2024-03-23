@@ -1,0 +1,48 @@
+name: Publish
+permissions:
+  contents: write
+  id-token: write
+on:
+  push:
+    tags: 
+      - "v*"
+jobs:
+  build_publish:
+    name: Build publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install and build
+        run: pnpm install && pnpm build:all
+      - name: Set npm
+        run: |
+          npm config set provenance true
+          npm config set access public
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Enter prerelease
+        if: ${{ contains(github.ref, 'beta') }}
+        run: pnpm changeset pre enter beta
+      - name: Exit prerelease
+        if: ${{ ! contains(github.ref, 'beta') }}
+        run: pnpm changeset pre exit 
+      - name: Publish 
+        run: |
+          pnpm changeset version
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "chore: bump versions"
+          git push
+          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
