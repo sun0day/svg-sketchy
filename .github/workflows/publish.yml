@@ -4,8 +4,6 @@ permissions:
   id-token: write
 on:
   push:
-    tags:
-      - "v*"
 jobs:
   build:
     name: Build
@@ -59,10 +57,15 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Enter prerelease
+        if: ${{ contains(github.ref, 'beta') }}
+        run: pnpm changeset pre enter beta
+      - name: Exit prerelease
+        if: ${{ ! contains(github.ref, 'beta') }}
+        run: pnpm changeset pre exit 
       - name: Publish 
         uses: changesets/action@v1
         with:
-          version: pnpm ci:version
           commit: "chore: bump versions"
           title: "chore: bump versions"
           publish: pnpm publish -r --filter "{packages/**}" --access public --no-git-checks 
