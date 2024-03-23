@@ -46,7 +46,7 @@ jobs:
         with:
           path: .
       - name: Move artifact
-        run: rm -rf packages && mv -f artifact/* ./  
+        run: chmod -R 777 artifact && rm -rf packages && mv -f artifact/* ./  
       - name: Set npm
         run: |
           npm config set provenance true
