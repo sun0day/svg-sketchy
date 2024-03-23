@@ -52,13 +52,20 @@ jobs:
       - name: List packages
         run: cd artifact && ls -R packages/**
         shell: bash
-      - name: Publish
+      - name: Set npm
         run: |
           npm config set provenance true
           npm config set access public
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks  
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish 
+        uses: changesets/action@v1
+        with:
+          version: pnpm ci:version
+          commit: "chore: bump versions"
+          title: "chore: bump versions"
+          publish: pnpm publish -r --filter "{packages/**}" --access public --no-git-checks 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
