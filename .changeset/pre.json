@@ -1,9 +1,0 @@
-{
-  "mode": "pre",
-  "tag": "beta",
-  "initialVersions": {
-    "svg-sketchy": "0.0.0",
-    "svg-sketchy.client": "0.0.0"
-  },
-  "changesets": []
-}

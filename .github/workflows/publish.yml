@@ -37,12 +37,12 @@ jobs:
       - name: Publish 
         run: |
           pnpm changeset version
+          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks 
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
           git commit -m "chore: bump versions"
           git push
-          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
