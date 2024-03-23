@@ -17,12 +17,12 @@ on:
   pull_request: null
 
 jobs:
-  build:
+  build_test:
     strategy:
       matrix:
         host: [ubuntu-latest, macos-latest, windows-latest]
         node: [18, 20, 21]
-    name: Build ${{ matrix.host  }} - node@${{ matrix.node }}
+    name: build_test ${{ matrix.host  }} - node@${{ matrix.node }}
     runs-on: ${{ matrix.host  }} 
     steps:
       - uses: actions/checkout@v4
@@ -37,5 +37,5 @@ jobs:
       - name: Install and build
         run: pnpm install && pnpm build:all
       - name: Test
-        run: pnpm install && pnpm build:all
+        run: pnpm test
   
