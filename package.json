@@ -4,7 +4,6 @@
   "type": "module",
   "version": "0.0.0",
   "scripts": {
-    "changeset": "changeset",
     "build:all": "pnpm --filter=\"svg-sketchy*\" run build",
     "lint": "eslint --fix **/*.ts"
   },
