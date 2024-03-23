@@ -4,14 +4,14 @@ permissions:
   id-token: write
 on:
   push:
+    tags:
+      - "v*"
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: chore/ci
       - uses: pnpm/action-setup@v3
         with:
           version: latest
