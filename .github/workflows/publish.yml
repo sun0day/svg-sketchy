@@ -4,6 +4,8 @@ permissions:
   id-token: write
 on:
   push:
+    tags: 
+      - "v*"
 jobs:
   build_publish:
     name: Build publish
