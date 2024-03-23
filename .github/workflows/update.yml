@@ -3,7 +3,8 @@ permissions:
   contents: write
   id-token: write
 on:
-  push:
+  schedule:
+    - cron: '* 1 * * *'
 
 jobs:
   update_deps :
