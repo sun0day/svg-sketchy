@@ -22,7 +22,7 @@ jobs:
       matrix:
         host: [ubuntu-latest, macos-latest, windows-latest]
         node: [18, 20, 21]
-    name: Build ${{ matrix.host  }} - ${{ matrix.node }}
+    name: Build ${{ matrix.host  }} - node@${{ matrix.node }}
     runs-on: ${{ matrix.host  }} 
     steps:
       - uses: actions/checkout@v4
