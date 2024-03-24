@@ -16,5 +16,8 @@
   "labels": [
     "dependencies"
   ],
-  "rangeStrategy": "bump"
+  "rangeStrategy": "bump",
+  "schedule": [
+    "before 1am"
+  ]
 }
