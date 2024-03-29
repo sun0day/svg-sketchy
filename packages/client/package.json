@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@viz-js/viz": "^3.4.0",
     "svg2roughjs": "^3.2.0",
     "typescript": "^5.2.2",
     "vite": "^5.1.6"
