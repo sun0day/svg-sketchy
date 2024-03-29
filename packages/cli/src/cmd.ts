@@ -15,6 +15,7 @@ program
   .action((target, options) => {
     options.target = target;
     const runner = new Runner(options);
+
     (async () => {
       let svgCount = 0;
       const start = performance.now();

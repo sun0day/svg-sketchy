@@ -1,14 +1,19 @@
 import {basename,dirname, isAbsolute, join} from 'node:path';
-import { lstatSync } from 'node:fs';
-import {readFile} from 'node:fs/promises';
+import {readFile, writeFile} from 'node:fs/promises';
 import EventEmitter from 'node:events';
 import pp, {type CDPSession} from 'puppeteer';
 import fg, {isDynamicPattern} from 'fast-glob';
 
 const cwd = process.cwd();
 const clientEntry = "svg-sketchy.client/dist/svg-sketchy.iife.js";
-const svgReg = /\.svg$/g;
-const svgNameReg = /\[name\]/;
+const svgExtReg = /\.svg$/;
+const extReg = /([^/]+)\.(svg|dot)$/;
+const namePattern = '[name]';
+
+export enum FileType {
+  SVG = 'svg',
+  DOT = 'dot'
+}
 
 export enum RunnerEventName {
   DOWNLOAD_START = 'download_start',
@@ -20,8 +25,8 @@ export class Runner extends EventEmitter {
   private root: string;
   private outputDir: string;
   private outputFileName: string = "[name].svg";
-  private svgFiles:string[] = [];
-  private svgOutputFiles: string[] = [];
+  private inputFiles:string[] = [];
+  private outputFiles: string[] = [];
   private clientPath: string = require?.resolve ? require.resolve(clientEntry) : import.meta.resolve(clientEntry);
   private htmlHead = Buffer.from(`
 <!doctype html>
@@ -53,32 +58,33 @@ export class Runner extends EventEmitter {
 
   private parseOutput(output: string) {
     const absOutput = isAbsolute(output) ? output : join(this.root, output);
-    const fileName = basename(absOutput)
-    if(svgReg.test(fileName)) {
-      this.outputDir = dirname(absOutput)
-      this.outputFileName = fileName
+    const fileName = basename(absOutput);
+    if(extReg.test(fileName)) {
+      this.outputDir = dirname(absOutput);
+      this.outputFileName = fileName;
     } else {
-      this.outputDir = absOutput
+      this.outputDir = absOutput;
     }
   }
 
   private parseSvgFiles(target: string)  {
-    this.svgFiles = target.split(" ").reduce((files, pattern) => {
+    this.inputFiles = target.split(" ").reduce((files, pattern) => {
       if(isDynamicPattern(pattern)) {
         files.push(...fg.sync(this.resolveAbsPath(pattern), {onlyFiles: true}));
       } else {
         files.push(this.resolveAbsPath(pattern));
       }
       return files; 
-    }, [] as string[]);
+    }, [] as string[])
+      .sort((next, cur) => svgExtReg.test(cur) ? 1 : -1);
 
-    if(this.svgFiles.length < 1) {
+    if(this.inputFiles.length < 1) {
       throw new Error(`No svg files found!`);
     }    
 
-    this.svgOutputFiles = this.svgFiles.map(filePath => {
-      const fileName = basename(filePath);
-      return this.outputFileName.replace(svgNameReg, () => fileName.replace(svgReg, "")); 
+    this.outputFiles = this.inputFiles.map(filePath => {
+      const [,name]  = basename(filePath).match(extReg);
+      return this.outputFileName.replace(namePattern, name);
     });
   }
 
@@ -87,7 +93,34 @@ export class Runner extends EventEmitter {
   }
 
   private async computeHtml() {
-    const [clientJs, ...svgs] = await Promise.all([readFile(this.clientPath), ...this.svgFiles.map(file => readFile(file))]);
+    const SVG_FILES = [];
+    const svgFiles = [];
+    const otherFiles = [];
+    const svgs = [];
+    const others = [];
+   
+    const [clientJs] = await Promise.all([
+      readFile(this.clientPath),
+
+      ...this.inputFiles.map(async (file, index) => {
+        let dsl = null;
+        let fileType = FileType.SVG;
+        const content = await readFile(file);
+        const out = this.outputFiles[index];
+
+        if(svgExtReg.test(file)) {
+          svgFiles.push(file);
+          svgs.push(content);
+        } else {
+          otherFiles.push(file);
+          others.push(content);
+          dsl = content.toString();
+          fileType = FileType.DOT;
+        }
+
+        SVG_FILES.push({ out, dsl, type: fileType });
+      })]);
+
     const scriptOpenTag = 
       Buffer.from("<script>");
     const scriptCloseTag = 
@@ -97,7 +130,9 @@ export class Runner extends EventEmitter {
       this.htmlHead,
       ...svgs,
       scriptOpenTag,
-      Buffer.from("window.SVG_FILES=[" + this.svgOutputFiles.map(file => `"${file}"`) + "]"),
+      Buffer.from(`
+        window.SVG_FILES=${JSON.stringify(SVG_FILES)}
+      `),
       scriptCloseTag,
       scriptOpenTag,
       clientJs,
@@ -126,16 +161,16 @@ export class Runner extends EventEmitter {
         if(isCompleted || isCanceled) {
           const downloadFileName = downloadingSvgs[e.guid];
           delete downloadingSvgs[e.guid]; 
-          const index = this.svgOutputFiles.indexOf(downloadFileName);
+          const index = this.outputFiles.indexOf(downloadFileName);
 
           this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
-            svg: this.svgFiles[index],
+            svg: this.inputFiles[index],
             out: join(this.outputDir, downloadFileName)
           });
 
           if(isCompleted) {
-            this.svgFiles.splice(index, 1);
-            this.svgOutputFiles.splice(index, 1);
+            this.inputFiles.splice(index, 1);
+            this.outputFiles.splice(index, 1);
           }
         }
 
@@ -157,7 +192,7 @@ export class Runner extends EventEmitter {
     });
 
 
-    while(this.svgFiles.length) {
+    while(this.inputFiles.length) {
       const page = await browser.newPage();
       const htmlBuf = await this.computeHtml();
       const navigation = page.setContent(htmlBuf!.toString());
@@ -168,10 +203,6 @@ export class Runner extends EventEmitter {
       page.close();
     } 
 
-
     await browser.close();
   }
 }
-
-
-
