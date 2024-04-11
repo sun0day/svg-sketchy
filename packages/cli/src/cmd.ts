@@ -12,31 +12,29 @@ program
   .argument('[svg_files]', 'svg file paths', "*.svg")
   .option('-r, --root <svg_root_dir>', 'svg files root directory, ignored when [svg_files] is absolute (default: cwd)')
   .option('-o, --output <svg_out_dir>', 'svg files output directory (default: cwd)')
-  .action((target, options) => {
+  .action(async (target, options) => {
     options.target = target;
     const runner = new Runner(options);
 
-    (async () => {
-      let svgCount = 0;
-      const start = performance.now();
-      const spinner = ora('generating svg sketch...').start();
+    let svgCount = 0;
+    const start = performance.now();
+    const spinner = ora('generating svg sketch...').start();
 
-      runner.on(RunnerEventName.DOWNLOAD_COMPLETED, ({svg, out}) => {
-        svgCount++;
-        spinner.info(`${svg}  -> ${out}`);
-      });
+    runner.on(RunnerEventName.DOWNLOAD_COMPLETED, ({svg, out}) => {
+      svgCount++;
+      spinner.info(`${svg}  -> ${out}`);
+    });
 
-      runner.on(RunnerEventName.DOWNLOAD_FAIL, svg => {
-        spinner.fail(`${svg} fail to sketch`);
-      });  
+    runner.on(RunnerEventName.DOWNLOAD_FAIL, svg => {
+      spinner.fail(`${svg} fail to sketch`);
+    });  
 
-      await  runner.run();
-      
-      console.log('\n');
-      spinner.succeed(`total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms!`);
-      spinner.stop();
-    })();
+    await runner.run();
+
+    console.log('\n');
+    spinner.succeed(`total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms!`);
+    spinner.stop();
+    //process.exit(0);
   });
 
-program.parse();
-
+program.parseAsync();

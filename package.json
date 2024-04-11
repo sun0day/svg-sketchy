@@ -5,12 +5,18 @@
   "version": "0.0.0",
   "scripts": {
     "build:all": "pnpm --filter=\"svg-sketchy*\" run build",
-    "lint": "eslint --fix **/*.ts"
+    "lint": "eslint --fix **/*.ts",
+    "test": "vitest --watch=false --config ./vitest.config.ts",
+    "test:watch": "vitest --watch --config ./vitest.config.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
-    "eslint": "^8.57.0"
+    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/ui": "^1.4.0",
+    "eslint": "^8.57.0",
+    "vitest": "^1.4.0"
   }
 }
