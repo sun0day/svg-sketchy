@@ -176,7 +176,7 @@ export class Runner extends EventEmitter {
           const downloadFileName = downloadingSvgs[e.guid];
           delete downloadingSvgs[e.guid]; 
           const index = this.outputFiles.indexOf(downloadFileName);
-
+          console.log(this.outputDir, downloadFileName)
           this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
             svg: this.inputFiles[index],
             out: join(this.outputDir, downloadFileName)
