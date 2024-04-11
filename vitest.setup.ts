@@ -59,7 +59,7 @@ beforeAll(async () => {
 
     return () => {
       return Promise.all(svgs.map((file) => {
-        return readFile(`${file}.svg`, {encoding: 'utf-8'});
+        return readFile(resolve(globalThis.TMP, `${file}.svg`), {encoding: 'utf-8'});
       }));
     };
   };

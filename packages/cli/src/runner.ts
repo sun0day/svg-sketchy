@@ -43,7 +43,7 @@ export class Runner extends EventEmitter {
     {
       root = cwd,
       target = "*.svg",
-      output = cwd 
+      output 
     }: {
       root?: string,
       target?: string,
@@ -53,7 +53,7 @@ export class Runner extends EventEmitter {
     super();
 
     this.root = root;
-    this.parseOutput(output);
+    this.parseOutput(output ?? root);
     this.parseSvgFiles(target);
   }
 
@@ -75,7 +75,7 @@ export class Runner extends EventEmitter {
       } else {
         files.push(this.resolveAbsPath(pattern));
       }
-      console.log(files);
+
       return files; 
     }, [] as string[])
       .filter((file) => {
@@ -175,16 +175,18 @@ export class Runner extends EventEmitter {
         if(isCompleted || isCanceled) {
           const downloadFileName = downloadingSvgs[e.guid];
           delete downloadingSvgs[e.guid]; 
-          const index = this.outputFiles.indexOf(downloadFileName);
-          console.log(this.outputDir, downloadFileName)
-          this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
-            svg: this.inputFiles[index],
-            out: join(this.outputDir, downloadFileName)
-          });
 
-          if(isCompleted) {
-            this.inputFiles.splice(index, 1);
-            this.outputFiles.splice(index, 1);
+          if(downloadFileName) {
+            const index = this.outputFiles.indexOf(downloadFileName);
+            this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
+              svg: this.inputFiles[index],
+              out: join(this.outputDir, downloadFileName)
+            });
+
+            if(isCompleted) {
+              this.inputFiles.splice(index, 1);
+              this.outputFiles.splice(index, 1);
+            }
           }
         }
 

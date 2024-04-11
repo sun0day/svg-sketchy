@@ -18,7 +18,7 @@ describe('test cmd', () => {
       await global.initTmp();
       const readSvgs =  await global.createSvgs(num, type);
       await import(cmdFile);
-      mockAction(`*${global.EXT[type]}`, {root: global.TMP});
+      await mockAction(`*${global.EXT[type]}`, {root: global.TMP});
       await vi.waitFor(async () => {
         const svgs = await readSvgs();
         expect(mockSpinner.succeed).toHaveBeenCalled()
