@@ -4,12 +4,21 @@
 
 ## Features
 
-- Converting svgs to [hand-drawn](https://roughjs.com/) style.
-- Compatible with [.dot](https://graphviz.org/doc/info/lang.html) and [.mmd](https://mermaid.js.org/ecosystem/integrations-create.html#file-extension) formats.
+- :pencil2: Converting svgs to [hand-drawn](https://roughjs.com/) style.
+- :four_leaf_clover: Compatible with [.dot](https://graphviz.org/doc/info/lang.html) and [.mmd](https://mermaid.js.org/ecosystem/integrations-create.html#file-extension) formats.
+
+:point_right: Try it [online](https://fskpf.github.io/)
+
+## Install
+
+```shell
+$ npm i -g svg-sketchy
+```
+:::note
+`svg-sketchy` is based on [puppeteer](https://pptr.dev/), if your platform doesn't have any of its supported browsers, you should [install](https://pptr.dev/browsers-api) one of them first.
+:::
 
 ## Usage
-
-Try it [online](https://fskpf.github.io/)
 
 ### Used as CLI
 
