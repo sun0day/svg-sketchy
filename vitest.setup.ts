@@ -29,6 +29,10 @@ beforeAll(async () => {
     svg: '.svg',
     dot: '.dot'
   };
+  globalThis.EXT_CONTENT = {
+    svg: globalThis.SVG,
+    dot: globalThis.DOT
+  };
   globalThis.TMP = resolve(process.cwd(), 'packages/cli/tmp');
   globalThis.reset = () => {
     vi.resetModules();
@@ -46,7 +50,10 @@ beforeAll(async () => {
           const file = index + Date.now() + '';
           svgs.push(file);
 
-          return  writeFile(resolve(globalThis.TMP, `${file}${globalThis.EXT[type]}`), globalThis.SVG);
+          return  writeFile(
+            resolve(globalThis.TMP, `${file}${globalThis.EXT[type]}`), 
+            globalThis.EXT_CONTENT[type]
+          );
         }
       )); 
 

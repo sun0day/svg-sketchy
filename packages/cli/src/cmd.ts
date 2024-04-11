@@ -34,7 +34,6 @@ program
     console.log('\n');
     spinner.succeed(`total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms!`);
     spinner.stop();
-    //process.exit(0);
   });
 
 program.parseAsync();
