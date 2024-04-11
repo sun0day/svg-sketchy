@@ -105,7 +105,9 @@ export class Runner extends EventEmitter {
   }
 
   private resolveAbsPath(path: string) {
-    return isAbsolute(path) ? path : join(this.root, path);
+    const f = isAbsolute(path) ? path : join(this.root, path);
+    console.log(f)
+    return f
   }
 
   private async computeHtml() {
