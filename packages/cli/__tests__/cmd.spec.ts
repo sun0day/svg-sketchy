@@ -16,11 +16,11 @@ describe('test cmd', () => {
   async function testCreating(num: number) {
     await Promise.all(Object.keys(global.EXT).map(async type => {
       await global.initTmp();
-      await global.createSvgs(num, type);
+      const readSvgs =  await global.createSvgs(num, type);
       await import(cmdFile);
       mockAction(`*${global.EXT[type]}`, {root: global.TMP});
       await vi.waitFor(async () => {
-        const svgs = await global.readSvgs(num);
+        const svgs = await readSvgs(num);
         expect(svgs.length).toBe(num);
         expect(svgs[0]).not.toBe(global.SVG);
       }, {timeout: 2000});
@@ -79,7 +79,7 @@ describe('test cmd', () => {
     await testCreating(1); 
   });
 
-  it('sketch multiple svg', async () => {
+  it('sketch multiple svg, dot', async () => {
     await testCreating(20);
   });
 });

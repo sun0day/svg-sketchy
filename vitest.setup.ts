@@ -29,7 +29,6 @@ beforeAll(async () => {
     svg: '.svg',
     dot: '.dot'
   };
-
   globalThis.TMP = resolve(process.cwd(), 'packages/cli/tmp');
   globalThis.reset = () => {
     vi.resetModules();
@@ -38,22 +37,29 @@ beforeAll(async () => {
   globalThis.mockArgv = (argvs: string[]) => {
     process.argv = process.argv.slice(0, 2).concat(argvs);
   };
-  globalThis.createSvgs = (num: number, type:'svg' | 'dot' = 'svg') => {
-    return Promise.all(
+  globalThis.createSvgs = async (num: number, type:'svg' | 'dot' = 'svg') => {
+    const svgs:string[] = []; 
+
+    await Promise.all(
       new Array(num).fill(0).map(
-        (_, index) => writeFile(resolve(globalThis.TMP, `${index}${globalThis.EXT[type]}`), globalThis.SVG)
+        (_, index) => {
+          const file = index + Date.now() + '';
+          svgs.push(file);
+
+          return  writeFile(resolve(globalThis.TMP, `${file}${globalThis.EXT[type]}`), globalThis.SVG);
+        }
       )); 
-  };
-  globalThis.readSvgs = (num: number) => {
-    return Promise.all(new Array(num).fill(0).map((_, index) => {
-      return readFile(`${index}.svg`, {encoding: 'utf-8'});
-    }));
+
+    return () => {
+      return Promise.all(svgs.map((file) => {
+        return readFile(`${file}.svg`, {encoding: 'utf-8'});
+      }));
+    };
   };
   globalThis.initTmp = async () => {
     await rm(globalThis.TMP, {recursive: true, force: true}).catch(() => {});
     await mkdir(globalThis.TMP).catch(() => {});
   };
-
   globalThis.waitForRejection = async (cb: () => void) => {
     return new Promise((_, reject) => {
       const innerHandler = (err: Error) => {
