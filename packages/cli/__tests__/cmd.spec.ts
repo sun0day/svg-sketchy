@@ -15,13 +15,17 @@ describe('test cmd', () => {
 
   async function testCreating(num: number) {
     for(const type of Object.keys(global.EXT)){
+      await global.reset()
       await global.initTmp();
       const readSvgs =  await global.createSvgs(num, type);
       await import(cmdFile);
       await mockAction(`*${global.EXT[type]}`, {root: global.TMP});
       await vi.waitFor(async () => {
         const svgs = await readSvgs();
+        expect(mockSpinner.info).toHaveBeenCalled();
         expect(mockSpinner.succeed).toHaveBeenCalled();
+        expect(mockSpinner.stop).toHaveBeenCalled();
+        expect(mockSpinner.fail).not.toHaveBeenCalled();
         expect(svgs.length).toBe(num);
         expect(svgs[0]).not.toBe(global.SVG);
       }, {timeout: 5000});
