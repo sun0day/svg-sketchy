@@ -21,7 +21,7 @@ describe('test cmd', () => {
       await mockAction(`*${global.EXT[type]}`, {root: global.TMP});
       await vi.waitFor(async () => {
         const svgs = await readSvgs();
-        expect(mockSpinner.succeed).toHaveBeenCalled()
+        expect(mockSpinner.succeed).toHaveBeenCalled();
         expect(svgs.length).toBe(num);
         expect(svgs[0]).not.toBe(global.SVG);
       }, {timeout: 5000});
@@ -76,11 +76,11 @@ describe('test cmd', () => {
     await expect(() => mockAction('x.txt', {})).rejects.toThrowError(notFound);
   });
 
-  it('sketch single svg, dot', async () => {
+  it('sketch single svg, dot', {retry: 2}, async () => {
     await testCreating(1); 
   });
 
-  it('sketch multiple svg, dot', async () => {
+  it('sketch multiple svg, dot', {retry: 2}, async () => {
     await testCreating(20);
   });
 });

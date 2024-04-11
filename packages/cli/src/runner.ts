@@ -76,6 +76,8 @@ export class Runner extends EventEmitter {
         files.push(this.resolveAbsPath(pattern));
       }
 
+      console.log(files)
+
       return files; 
     }, [] as string[])
       .filter((file) => {
