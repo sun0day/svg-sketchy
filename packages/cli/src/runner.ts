@@ -105,7 +105,7 @@ export class Runner extends EventEmitter {
   }
 
   private resolveAbsPath(path: string) {
-    const f = (isAbsolute(path) ? path : join(this.root, path)).replace(/\\/, '/');
+    const f = (isAbsolute(path) ? path : join(this.root, path)).replace(/\\/g, '/');
     console.log(f)
     return f
   }
