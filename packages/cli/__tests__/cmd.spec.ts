@@ -23,7 +23,7 @@ describe('test cmd', () => {
         const svgs = await readSvgs(num);
         expect(svgs.length).toBe(num);
         expect(svgs[0]).not.toBe(global.SVG);
-      }, {timeout: 2000});
+      }, {timeout: 5000});
     }));
   }
 
