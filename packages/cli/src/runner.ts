@@ -22,6 +22,11 @@ export enum RunnerEventName {
   DOWNLOAD_FAIL = 'download_fail',
 }
 
+export interface RunnerEventParams {
+  svg: string,
+  out: string
+}
+
 export class Runner extends EventEmitter {
   private root: string;
   private outputDir: string;
@@ -76,8 +81,6 @@ export class Runner extends EventEmitter {
         files.push(this.resolveAbsPath(pattern));
       }
 
-      console.log(files)
-
       return files; 
     }, [] as string[])
       .filter((file) => {
@@ -105,9 +108,7 @@ export class Runner extends EventEmitter {
   }
 
   private resolveAbsPath(path: string) {
-    const f = (isAbsolute(path) ? path : join(this.root, path)).replace(/\\/g, '/');
-    console.log(f)
-    return f
+    return  (isAbsolute(path) ? path : join(this.root, path)).replace(/\\/g, '/');
   }
 
   private async computeHtml() {
@@ -182,10 +183,13 @@ export class Runner extends EventEmitter {
 
           if(downloadFileName) {
             const index = this.outputFiles.indexOf(downloadFileName);
-            this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
-              svg: this.inputFiles[index],
-              out: join(this.outputDir, downloadFileName)
-            });
+            this.emit(
+              isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, 
+              {
+                svg: this.inputFiles[index],
+                out: join(this.outputDir, downloadFileName)
+              } as RunnerEventParams
+            );
 
             if(isCompleted) {
               this.inputFiles.splice(index, 1);

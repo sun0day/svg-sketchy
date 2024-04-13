@@ -1,9 +1,52 @@
 import {Command} from 'commander';
-import ora from 'ora';
+import ora, {Ora} from 'ora';
+import chalk from 'chalk';
 import pkgJson from '../package.json';
-import {Runner, RunnerEventName} from './runner';
+import {Runner, RunnerEventName, RunnerEventParams} from './runner';
 
 const program = new Command();
+
+function formatMessage({svg, out}:RunnerEventParams, failed: boolean = false) {
+  return `${svg} ${chalk[failed ? 'redBright' : 'greenBright']('➜')} ${out}`;  
+}
+
+class InnerSpinner {
+  spinner: Ora;
+  constructor(spinner: Ora) {
+    this.spinner = spinner;
+  }
+
+  info(text: string)  {
+    this.spinner.stopAndPersist(
+      {
+        symbol: chalk.cyanBright('ℹ'),
+        text
+      }
+    );
+  }
+
+  succeed(text: string)  {
+    this.spinner.stopAndPersist(
+      {
+        symbol: chalk.greenBright('✔'),
+        text
+      }
+    );
+  }
+
+  fail(text: string)  {
+    this.spinner.stopAndPersist(
+      {
+        symbol: chalk.redBright('✖'),
+        text
+      }
+    );
+  }
+
+  stop() {
+    this.spinner.stop();
+  }
+}
 
 program
   .name(pkgJson.name)
@@ -11,27 +54,33 @@ program
   .version(pkgJson.version)
   .argument('[svg_files]', 'svg file paths', "*.svg")
   .option('-r, --root <svg_root_dir>', 'svg files root directory, ignored when [svg_files] is absolute (default: cwd)')
-  .option('-o, --output <svg_out_dir>', 'svg files output directory (default: cwd)')
+  .option('-o, --output <svg_out_file>', 'svg files output directory and filename (default: "{cwd}/[name].svg"),\nuse "[name]" to keep the original svg filename')
   .action(async (target, options) => {
     options.target = target;
     const runner = new Runner(options);
 
     let svgCount = 0;
+    let hasFailedSvg = false;
     const start = performance.now();
-    const spinner = ora('generating svg sketch...').start();
 
-    runner.on(RunnerEventName.DOWNLOAD_COMPLETED, ({svg, out}) => {
+    const spinner = new InnerSpinner(ora('generating svg sketch...').start());
+
+    runner.on(RunnerEventName.DOWNLOAD_COMPLETED, (e) => {
       svgCount++;
-      spinner.info(`${svg}  -> ${out}`);
+      spinner.info(formatMessage(e));
     });
 
-    runner.on(RunnerEventName.DOWNLOAD_FAIL, svg => {
-      spinner.fail(`${svg} fail to sketch`);
+    runner.on(RunnerEventName.DOWNLOAD_FAIL, (e) => {
+      hasFailedSvg = true;
+      spinner.fail(formatMessage(e, true));
     });  
 
     await runner.run();
 
     console.log('\n');
+    if(hasFailedSvg) {
+      spinner.fail(`please make sure that failed files have correct format and then retry sketching`);
+    }
     spinner.succeed(`total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms!`);
     spinner.stop();
   });

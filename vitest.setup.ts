@@ -50,7 +50,7 @@ beforeAll(async () => {
           const file = index + Date.now() + '';
           svgs.push(file);
 
-          return  writeFile(
+          return writeFile(
             resolve(globalThis.TMP, `${file}${globalThis.EXT[type]}`), 
             globalThis.EXT_CONTENT[type]
           );

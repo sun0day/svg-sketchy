@@ -1,31 +1,28 @@
 import {vi, describe, it, expect, afterEach, beforeEach} from 'vitest';
 
 describe('test cmd', () => {
+  console.log = vi.fn()
   const cmdFile = '../src/cmd';
   let mockAction: (target?: string, options?: any) => Promise<void>;
   const mockSpinner = {
-    info: vi.fn(),
-    fail: vi.fn(),
-    succeed: vi.fn(),
+    stopAndPersist: vi.fn(),
     stop: vi.fn(),
   };
   const mockOra = vi.fn().mockReturnValue({
     start: () => mockSpinner
   });
 
-  async function testCreating(num: number) {
+  async function testSketch(num: number) {
     for(const type of Object.keys(global.EXT)){
-      await global.reset()
+      await global.reset();
       await global.initTmp();
       const readSvgs =  await global.createSvgs(num, type);
       await import(cmdFile);
       await mockAction(`*${global.EXT[type]}`, {root: global.TMP});
       await vi.waitFor(async () => {
         const svgs = await readSvgs();
-        expect(mockSpinner.info).toHaveBeenCalled();
-        expect(mockSpinner.succeed).toHaveBeenCalled();
+        expect(mockSpinner.stopAndPersist).toHaveBeenCalled();
         expect(mockSpinner.stop).toHaveBeenCalled();
-        expect(mockSpinner.fail).not.toHaveBeenCalled();
         expect(svgs.length).toBe(num);
         expect(svgs[0]).not.toBe(global.SVG);
       }, {timeout: 5000});
@@ -81,10 +78,10 @@ describe('test cmd', () => {
   });
 
   it('sketch single svg, dot', {retry: 2}, async () => {
-    await testCreating(1); 
+    await testSketch(1); 
   });
 
   it('sketch multiple svg, dot', {retry: 2}, async () => {
-    await testCreating(20);
+    await testSketch(20);
   });
 });
