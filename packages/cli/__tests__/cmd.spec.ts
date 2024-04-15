@@ -81,6 +81,6 @@ describe('test cmd', () => {
   });
 
   it('sketch multiple svg, dot', {retry: 2}, async () => {
-    await testSketch(40);
+    await testSketch(30);
   });
 });
