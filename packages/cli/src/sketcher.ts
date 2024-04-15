@@ -16,18 +16,18 @@ export enum FileType {
   DOT = 'dot'
 }
 
-export enum RunnerEventName {
+export enum SVGSketcherEventName {
   DOWNLOAD_START = 'download_start',
   DOWNLOAD_COMPLETED = 'download_completed',
   DOWNLOAD_FAIL = 'download_fail',
 }
 
-export interface RunnerEventParams {
+export interface SVGSketcherEventParams {
   svg: string,
   out: string
 }
 
-export class Runner extends EventEmitter {
+export class SVGSketcher extends EventEmitter {
   private root: string;
   private outputDir: string;
   private outputFileName: string = "[name].svg";
@@ -169,7 +169,7 @@ export class Runner extends EventEmitter {
 
     return new Promise((resolve) => {
       session.on('Browser.downloadWillBegin', (e)=>{
-        this.emit(RunnerEventName.DOWNLOAD_START, e.suggestedFilename);
+        this.emit(SVGSketcherEventName.DOWNLOAD_START, e.suggestedFilename);
         downloadingSvgs[e.guid] = e.suggestedFilename;
       });
 
@@ -184,11 +184,11 @@ export class Runner extends EventEmitter {
           if(downloadFileName) {
             const index = this.outputFiles.indexOf(downloadFileName);
             this.emit(
-              isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, 
+              isCompleted ? SVGSketcherEventName.DOWNLOAD_COMPLETED : SVGSketcherEventName.DOWNLOAD_FAIL, 
               {
                 svg: this.inputFiles[index],
                 out: join(this.outputDir, downloadFileName)
-              } as RunnerEventParams
+              } as SVGSketcherEventParams
             );
 
             if(isCompleted) {
@@ -222,7 +222,7 @@ export class Runner extends EventEmitter {
       const downloadProgress = this.waitUntilDownload(session); 
 
       await navigation;
-      await  downloadProgress; 
+      await downloadProgress; 
       page.close();
     } 
 

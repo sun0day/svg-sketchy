@@ -1,7 +1,7 @@
 import {vi, describe, it, expect, afterEach, beforeEach} from 'vitest';
 
 describe('test cmd', () => {
-  console.log = vi.fn()
+  console.log = vi.fn();
   const cmdFile = '../src/cmd';
   let mockAction: (target?: string, options?: any) => Promise<void>;
   const mockSpinner = {
@@ -28,7 +28,6 @@ describe('test cmd', () => {
       }, {timeout: 5000});
     }
   }
-
 
   beforeEach(async () => {
     await globalThis.initTmp();
@@ -82,6 +81,6 @@ describe('test cmd', () => {
   });
 
   it('sketch multiple svg, dot', {retry: 2}, async () => {
-    await testSketch(20);
+    await testSketch(40);
   });
 });

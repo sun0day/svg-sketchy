@@ -2,11 +2,11 @@ import {Command} from 'commander';
 import ora, {Ora} from 'ora';
 import chalk from 'chalk';
 import pkgJson from '../package.json';
-import {Runner, RunnerEventName, RunnerEventParams} from './runner';
+import {SVGSketcher, SVGSketcherEventName, SVGSketcherEventParams} from './sketcher';
 
 const program = new Command();
 
-function formatMessage({svg, out}:RunnerEventParams, failed: boolean = false) {
+function formatMessage({svg, out}:SVGSketcherEventParams, failed: boolean = false) {
   return `${svg} ${chalk[failed ? 'redBright' : 'greenBright']('➜')} ${out}`;  
 }
 
@@ -57,7 +57,7 @@ program
   .option('-o, --output <svg_out_file>', 'svg files output directory and filename (default: "{cwd}/[name].svg"),\nuse "[name]" to keep the original svg filename')
   .action(async (target, options) => {
     options.target = target;
-    const runner = new Runner(options);
+    const runner = new SVGSketcher(options);
 
     let svgCount = 0;
     let hasFailedSvg = false;
@@ -65,12 +65,12 @@ program
 
     const spinner = new InnerSpinner(ora('generating svg sketch...').start());
 
-    runner.on(RunnerEventName.DOWNLOAD_COMPLETED, (e) => {
+    runner.on(SVGSketcherEventName.DOWNLOAD_COMPLETED, (e) => {
       svgCount++;
       spinner.info(formatMessage(e));
     });
 
-    runner.on(RunnerEventName.DOWNLOAD_FAIL, (e) => {
+    runner.on(SVGSketcherEventName.DOWNLOAD_FAIL, (e) => {
       hasFailedSvg = true;
       spinner.fail(formatMessage(e, true));
     });  

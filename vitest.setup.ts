@@ -3,37 +3,19 @@ import {resolve} from 'node:path';
 import {beforeAll, afterAll, vi} from 'vitest';
 
 beforeAll(async () => {
-  globalThis.SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="80pt" height="116pt" viewBox="0.00 0.00 80.00 116.00">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
-<title>G</title>
-<polygon style="fill:white;stroke:white;" points="-4,4 -4,-112 76,-112 76,4 -4,4"/>
-<!-- Hello -->
-<g id="node1" class="node"><title>Hello</title>
-<ellipse style="fill:none;stroke:black;" cx="36" cy="-90" rx="32.8565" ry="18"/>
-<text text-anchor="middle" x="36" y="-85.9" style="font-family:Times New Roman;font-size:14.00;">Hello</text>
-</g>
-<!-- World -->
-<g id="node3" class="node"><title>World</title>
-<ellipse style="fill:none;stroke:black;" cx="36" cy="-18" rx="36.1339" ry="18"/>
-<text text-anchor="middle" x="36" y="-13.9" style="font-family:Times New Roman;font-size:14.00;">World</text>
-</g>
-<!-- Hello&#45;&gt;World -->
-<g id="edge2" class="edge"><title>Hello-&gt;World</title>
-<path style="fill:none;stroke:black;" d="M36,-72C36,-64 36,-55 36,-46"/>
-<polygon style="fill:black;stroke:black;" points="39.5001,-46 36,-36 32.5001,-46 39.5001,-46"/>
-</g>
-</g>
-</svg>`;
-  globalThis.DOT = `digraph G {Hello->World}`;
+  globalThis.TMP = resolve(process.cwd(), 'packages/cli/tmp');
+  globalThis.FIXTURE = resolve(process.cwd(), 'packages/cli/__tests__/fixtures');
+  globalThis.readFixtures = async (file: string) => {
+    return readFile(resolve(globalThis.FIXTURE, file), 'utf-8');
+  };
   globalThis.EXT = {
     svg: '.svg',
     dot: '.dot'
   };
   globalThis.EXT_CONTENT = {
-    svg: globalThis.SVG,
-    dot: globalThis.DOT
+    svg: await globalThis.readFixtures('a.svg'),
+    dot: await globalThis.readFixtures('a.dot')
   };
-  globalThis.TMP = resolve(process.cwd(), 'packages/cli/tmp');
   globalThis.reset = () => {
     vi.resetModules();
     vi.clearAllMocks();
