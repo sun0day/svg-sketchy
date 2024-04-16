@@ -202,6 +202,8 @@ export class SVGSketcher extends EventEmitter {
           resolve(true);
         }
       });
+
+      setTimeout(resolve, 3000);
     });
   }
 
