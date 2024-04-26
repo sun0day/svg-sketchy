@@ -2,7 +2,7 @@
 
 <p align="center"> A Node.js CLI to sketch svg.</p>
 
-## Features
+## Features [WIP]
 
 - :pencil2: Converting svgs to [hand-drawn](https://roughjs.com/) style.
 - :four_leaf_clover: Compatible with [.dot](https://graphviz.org/doc/info/lang.html) and [.mmd](https://mermaid.js.org/ecosystem/integrations-create.html#file-extension) formats.
@@ -14,9 +14,7 @@
 ```shell
 $ npm i -g svg-sketchy
 ```
-:::note
-`svg-sketchy` is based on [puppeteer](https://pptr.dev/), if your platform doesn't have any of its supported browsers, you should [install](https://pptr.dev/browsers-api) one of them first.
-:::
+
 
 ## Usage
 
