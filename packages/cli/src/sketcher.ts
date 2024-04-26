@@ -1,5 +1,6 @@
-import {basename,dirname, isAbsolute, join} from 'node:path';
-import {readFile, writeFile} from 'node:fs/promises';
+import {basename,dirname, isAbsolute, join } from 'node:path';
+import {readFile} from 'node:fs/promises';
+import {accessSync} from 'node:fs';
 import EventEmitter from 'node:events';
 import pp, {type CDPSession} from 'puppeteer';
 import fg, {isDynamicPattern} from 'fast-glob';
@@ -15,13 +16,18 @@ export enum FileType {
   DOT = 'dot'
 }
 
-export enum RunnerEventName {
+export enum SVGSketcherEventName {
   DOWNLOAD_START = 'download_start',
   DOWNLOAD_COMPLETED = 'download_completed',
   DOWNLOAD_FAIL = 'download_fail',
 }
 
-export class Runner extends EventEmitter {
+export interface SVGSketcherEventParams {
+  svg: string,
+  out: string
+}
+
+export class SVGSketcher extends EventEmitter {
   private root: string;
   private outputDir: string;
   private outputFileName: string = "[name].svg";
@@ -42,7 +48,7 @@ export class Runner extends EventEmitter {
     {
       root = cwd,
       target = "*.svg",
-      output = cwd 
+      output 
     }: {
       root?: string,
       target?: string,
@@ -52,7 +58,7 @@ export class Runner extends EventEmitter {
     super();
 
     this.root = root;
-    this.parseOutput(output);
+    this.parseOutput(output ?? root);
     this.parseSvgFiles(target);
   }
 
@@ -74,12 +80,25 @@ export class Runner extends EventEmitter {
       } else {
         files.push(this.resolveAbsPath(pattern));
       }
+
       return files; 
     }, [] as string[])
+      .filter((file) => {
+        if(!extReg.test(file)) {
+          return false;
+        }
+
+        try {
+          accessSync(file);
+          return true;
+        } catch(_) {
+          return false;
+        }
+      })
       .sort((next, cur) => svgExtReg.test(cur) ? 1 : -1);
 
     if(this.inputFiles.length < 1) {
-      throw new Error(`No svg files found!`);
+      throw new Error(`No .svg, .dot files found!`);
     }    
 
     this.outputFiles = this.inputFiles.map(filePath => {
@@ -89,7 +108,7 @@ export class Runner extends EventEmitter {
   }
 
   private resolveAbsPath(path: string) {
-    return isAbsolute(path) ? path : join(this.root, path);
+    return  (isAbsolute(path) ? path : join(this.root, path)).replace(/\\/g, '/');
   }
 
   private async computeHtml() {
@@ -150,7 +169,7 @@ export class Runner extends EventEmitter {
 
     return new Promise((resolve) => {
       session.on('Browser.downloadWillBegin', (e)=>{
-        this.emit(RunnerEventName.DOWNLOAD_START, e.suggestedFilename);
+        this.emit(SVGSketcherEventName.DOWNLOAD_START, e.suggestedFilename);
         downloadingSvgs[e.guid] = e.suggestedFilename;
       });
 
@@ -161,16 +180,21 @@ export class Runner extends EventEmitter {
         if(isCompleted || isCanceled) {
           const downloadFileName = downloadingSvgs[e.guid];
           delete downloadingSvgs[e.guid]; 
-          const index = this.outputFiles.indexOf(downloadFileName);
 
-          this.emit(isCompleted ? RunnerEventName.DOWNLOAD_COMPLETED : RunnerEventName.DOWNLOAD_FAIL, {
-            svg: this.inputFiles[index],
-            out: join(this.outputDir, downloadFileName)
-          });
+          if(downloadFileName) {
+            const index = this.outputFiles.indexOf(downloadFileName);
+            this.emit(
+              isCompleted ? SVGSketcherEventName.DOWNLOAD_COMPLETED : SVGSketcherEventName.DOWNLOAD_FAIL, 
+              {
+                svg: this.inputFiles[index],
+                out: join(this.outputDir, downloadFileName)
+              } as SVGSketcherEventParams
+            );
 
-          if(isCompleted) {
-            this.inputFiles.splice(index, 1);
-            this.outputFiles.splice(index, 1);
+            if(isCompleted) {
+              this.inputFiles.splice(index, 1);
+              this.outputFiles.splice(index, 1);
+            }
           }
         }
 
@@ -178,13 +202,14 @@ export class Runner extends EventEmitter {
           resolve(true);
         }
       });
+
+      setTimeout(resolve, 3000);
     });
   }
 
   async run() {
     const browser = await pp.launch({ headless: true });
     const session = await browser.target().createCDPSession();
-
     await session.send('Browser.setDownloadBehavior', {
       behavior: 'allow',
       downloadPath : this.outputDir, 
@@ -199,7 +224,7 @@ export class Runner extends EventEmitter {
       const downloadProgress = this.waitUntilDownload(session); 
 
       await navigation;
-      await  downloadProgress; 
+      await downloadProgress; 
       page.close();
     } 
 

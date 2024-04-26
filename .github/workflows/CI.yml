@@ -28,14 +28,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
-          version: latest
+          version: 8
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }} 
           cache: pnpm
       - name: Install and build
-        run: pnpm install && pnpm build:all
+        run: pnpm install --side-effects-cache=false  && pnpm build:all 
       - name: Test
         run: pnpm test
   
