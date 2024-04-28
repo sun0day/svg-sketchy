@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "scripts": {
     "build:all": "pnpm --filter=\"svg-sketchy*\" run build",
+    "dev": "pnpm --filter=\"svg-sketchy\" run dev",
     "lint": "eslint --fix **/*.ts",
     "test": "vitest --watch=false --config ./vitest.config.ts",
     "test:watch": "vitest --watch --config ./vitest.config.ts"

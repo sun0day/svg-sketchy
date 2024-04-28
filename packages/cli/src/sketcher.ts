@@ -4,12 +4,15 @@ import {accessSync} from 'node:fs';
 import EventEmitter from 'node:events';
 import pp, {type CDPSession} from 'puppeteer';
 import fg, {isDynamicPattern} from 'fast-glob';
+import {Svg2Roughjs} from 'svg2roughjs';
 
 const cwd = process.cwd();
 const clientEntry = "svg-sketchy.client/dist/svg-sketchy.iife.js";
 const svgExtReg = /\.svg$/;
 const extReg = /([^/]+)\.(svg|dot)$/;
 const namePattern = '[name]';
+
+type Svg2RoughjsConfig = Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' | 'randomize' | 'pencilFilter' | 'sketchPatterns'>
 
 export enum FileType {
   SVG = 'svg',
@@ -22,9 +25,15 @@ export enum SVGSketcherEventName {
   DOWNLOAD_FAIL = 'download_fail',
 }
 
-export interface SVGSketcherEventParams {
+export interface SVGSketcherEventData {
   svg: string,
   out: string
+}
+
+export type SVGSketcherConfig = Svg2RoughjsConfig & {
+  root?: string,
+  target?: string,
+  output?: string
 }
 
 export class SVGSketcher extends EventEmitter {
@@ -43,21 +52,20 @@ export class SVGSketcher extends EventEmitter {
     <title>Svg Sketchy </title>
   </head>
   <body>`);
+  private sketchConfig: Svg2RoughjsConfig; 
 
   constructor(
     {
       root = cwd,
       target = "*.svg",
-      output 
-    }: {
-      root?: string,
-      target?: string,
-      output?: string
-    } = {}
+      output,
+      ...sketchConfig
+    }: SVGSketcherConfig
   ) {
     super();
 
     this.root = root;
+    this.sketchConfig = sketchConfig;
     this.parseOutput(output ?? root);
     this.parseSvgFiles(target);
   }
@@ -150,7 +158,8 @@ export class SVGSketcher extends EventEmitter {
       ...svgs,
       scriptOpenTag,
       Buffer.from(`
-        window.SVG_FILES=${JSON.stringify(SVG_FILES)}
+        window.SVG_FILES=${JSON.stringify(SVG_FILES)};
+        window.SKETCH_CONFIG=${JSON.stringify(this.sketchConfig)};
       `),
       scriptCloseTag,
       scriptOpenTag,
@@ -188,7 +197,7 @@ export class SVGSketcher extends EventEmitter {
               {
                 svg: this.inputFiles[index],
                 out: join(this.outputDir, downloadFileName)
-              } as SVGSketcherEventParams
+              } as SVGSketcherEventData
             );
 
             if(isCompleted) {
