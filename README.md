@@ -66,7 +66,7 @@ import { SVGSketcher } from 'svg-sketchy'
 // create a SVGSketcher instance
 const sketcher = new SVGSketcher({
   target: 'world.svg',
-  root: './',  // <--> -r, --root
+  root: './', // <--> -r, --root
   output: '/home/hello_[name].svg', // <--> -o, --output
   fontFamily: 'arial', // <--> -f, --font
   roughConfig: { // <--> --rough
