@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: ['src/cmd.ts', 'src/runner.ts'],
@@ -7,4 +7,4 @@ export default defineConfig({
   splitting: false,
   sourcemap: false,
   clean: true,
-});
+})

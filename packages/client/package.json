@@ -1,8 +1,8 @@
 {
   "name": "svg-sketchy.client",
-  "private": false,
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
+  "private": false,
   "scripts": {
     "dev": "vite",
     "build:ts": "tsc",

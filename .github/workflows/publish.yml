@@ -4,8 +4,8 @@ permissions:
   id-token: write
 on:
   push:
-    tags: 
-      - "v*"
+    tags:
+      - 'v*'
 jobs:
   build_publish:
     name: Build publish
@@ -31,10 +31,10 @@ jobs:
       - name: Enter prerelease
         if: ${{ contains(github.ref, 'beta') }}
         run: pnpm changeset pre enter beta
-      - name: Publish 
+      - name: Publish
         run: |
           pnpm changeset version
-          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks 
+          pnpm publish -r --filter "{packages/**}" --access public --no-git-checks
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
@@ -42,4 +42,3 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
