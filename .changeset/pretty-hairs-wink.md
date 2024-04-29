@@ -3,4 +3,4 @@
 "svg-sketchy.client": minor
 ---
 
-feat(cli): support to parse dot dsl
+feat(cli): support to customize sketch config
