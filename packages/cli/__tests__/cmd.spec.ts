@@ -1,6 +1,9 @@
 import EventEmitter from 'node:events';
 import {vi, describe, it, expect, afterEach, beforeEach} from 'vitest';
 
+// avoid "Possible EventEmitter memory leak detected. [num] beforeExit listeners added to [process]"
+EventEmitter.setMaxListeners(50);
+
 describe('test cmd', () => {
   console.log = vi.fn();
   const cmdFile = '../src/cmd';
