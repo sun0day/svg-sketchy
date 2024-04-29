@@ -63,7 +63,7 @@ export class SVGSketcher extends EventEmitter {
       target = '*.svg',
       output,
       ...sketchConfig
-    }: SVGSketcherConfig,
+    }: SVGSketcherConfig = {},
   ) {
     super()
 
