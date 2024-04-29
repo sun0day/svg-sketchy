@@ -17,28 +17,7 @@ $ npm i -g svg-sketchy
 
 ## Usage
 
-```shell
-Usage: svg-sketchy [options] [svg_files]
-
-CLI to sketch svg
-
-Arguments:
-  svg_files                    svg file paths. (default: "*.svg")
-
-Options:
-  -V, --version                output the version number
-  -r, --root <svg_root_dir>    svg files root directory, ignored when [svg_files] is absolute (default: cwd).
-  -o, --output <svg_out_file>  svg files output directory and filename (default: "{cwd}/[name].svg"),
-                               use "[name]" to keep the original svg filename.
-  -f, --font <font_family>     Font with which text elements should be drawn. Default "Comic Sans MS, cursive".
-                               Setting to "null" will use the text element's original font-family.
-  --rough <roughjs_config>     Rough.js config, see https://github.com/rough-stuff/rough/wiki#options.
-                               e.g: "roughness=0.5,bowing=5".
-  --no-rand                    Whether to disable randomize Rough.js' fillWeight, hachureAngle and hachureGap.
-  --no-fill                    Whether to disable sketch pattern fills/strokes or just copy them to the output.
-  --pencil                     Whether to apply a pencil effect on the SVG rendering.
-  -h, --help                   display help for command
-```
+### Used as CLI
 
 #### sketch `.svg`
 
@@ -64,3 +43,41 @@ After `sket hello_world.dot`, there would be a new svg `hello_world.svg` like:
 #### customize sketch style
 
 Try it [online](https://fskpf.github.io/) to see how different sketch configs affect the final svg output.
+
+#### CLI options
+
+|option|default|description|
+|----|----|----|
+-r, --root <svg_root_dir> | cwd |Svg files root directory, ignored when [svg_files] is absolute.
+-o, --output <svg_out_file> |"{cwd}/[name].svg"| Svg files output directory and filename, use **"[name]"** to keep the original svg filename.
+-f, --font <font_family>    |"Comic Sans MS, cursive"| Font with which text elements should be drawn, setting to **"null"** will use the text element's original font family.
+--rough <roughjs_config>    |-| Rough.js config, see [roughjs options](https://github.com/rough-stuff/rough/wiki#options). e.g: "roughness=0.5,bowing=5".
+--no-rand                   |false| Whether to disable randomize Rough.js' **fillWeight**, **hachureAngle** and **hachureGap**.
+--no-fill                   |false|Whether to disable sketch pattern **fills/strokes** or just copy them to the output.
+--pencil                    |false|Whether to apply a **pencil effect** on the SVG rendering.
+
+### Used as API
+
+You can also use `svg-sketchy` in Node.js env.
+
+```js
+import { SVGSketcher } from 'svg-sketchy'
+
+// create a SVGSketcher instance
+const sketcher = new SVGSketcher({
+  target: 'world.svg',
+  root: './',  // <--> -r, --root
+  output: '/home/hello_[name].svg', // <--> -o, --output
+  fontFamily: 'arial', // <--> -f, --font
+  roughConfig: { // <--> --rough
+    roughness: 0.5,
+    bowing: 5
+  },
+  randomize: false, // <--> --no-rand
+  sketchPatterns: false, // <--> --no-fill
+  pencilFilter: true, // <--> --pencil
+})
+
+// start transforming
+sketcher.run()
+```
