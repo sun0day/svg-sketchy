@@ -1,8 +1,8 @@
 {
   "name": "svg-sketchy",
-  "private": false,
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
+  "private": false,
   "description": "CLI to sketch svg",
   "exports": {
     ".": {
@@ -12,12 +12,12 @@
       }
     }
   },
+  "bin": {
+    "sket": "./dist/cmd.cjs"
+  },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup"
-  },
-  "bin": {
-    "sket": "./dist/cmd.cjs"
   },
   "dependencies": {
     "puppeteer": "^22.6.3",

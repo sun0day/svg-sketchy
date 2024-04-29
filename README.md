@@ -17,7 +17,6 @@ $ npm i -g svg-sketchy
 
 ## Usage
 
-
 ```shell
 Usage: svg-sketchy [options] [svg_files]
 
@@ -61,7 +60,6 @@ digraph G {Hello->World}
 After `sket hello_world.dot`, there would be a new svg `hello_world.svg` like:
 
 ![image](https://github.com/sun0day/svg-sketchy/assets/102238922/acf78da2-3ac8-485d-8fcd-bb3fabe9b09f)
-
 
 #### customize sketch style
 

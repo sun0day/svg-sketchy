@@ -1,11 +1,11 @@
-name: CI 
+name: CI
 permissions:
   contents: write
   id-token: write
 on:
   push:
     branches:
-      - 'main'
+      - main
     tags-ignore:
       - '**'
     paths-ignore:
@@ -22,8 +22,8 @@ jobs:
       matrix:
         host: [ubuntu-latest, macos-latest, windows-latest]
         node: [18, 20, 21]
-    name: build_test - ${{ matrix.host  }} - node@${{ matrix.node }}
-    runs-on: ${{ matrix.host  }} 
+    name: build_test - ${{ matrix.host }} - node@${{ matrix.node }}
+    runs-on: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
@@ -32,10 +32,13 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }} 
+          node-version: ${{ matrix.node }}
           cache: pnpm
-      - name: Install and build
-        run: pnpm install --side-effects-cache=false  && pnpm build:all 
+      - name: Install
+        run: pnpm install --side-effects-cache=false
+      - name: Lint
+        run: pnpm lint
+      - name: Build
+        run: pnpm build:all
       - name: Test
         run: pnpm test
-  

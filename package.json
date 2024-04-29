@@ -1,23 +1,30 @@
 {
   "name": "root",
-  "private": true,
   "type": "module",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "build:all": "pnpm --filter=\"svg-sketchy*\" run build",
     "dev": "pnpm --filter=\"svg-sketchy\" run dev",
-    "lint": "eslint --fix **/*.ts",
+    "lint": "eslint .",
     "test": "vitest --watch=false --config ./vitest.config.ts",
     "test:watch": "vitest --watch --config ./vitest.config.ts"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.16.0",
     "@changesets/cli": "^2.27.1",
     "@types/node": "^20.12.7",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
     "@vitest/coverage-v8": "^1.4.0",
     "@vitest/ui": "^1.4.0",
-    "eslint": "^9.0.0",
+    "eslint": "^8.0.0",
+    "lint-staged": "^15.2.2",
+    "simple-git-hooks": "^2.11.1",
     "vitest": "^1.4.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
   }
 }

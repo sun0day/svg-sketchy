@@ -1,6 +1,6 @@
-import {defineConfig} from 'vite';
-import {fileURLToPath} from 'node:url';
-import {resolve} from 'node:path';
+import { fileURLToPath } from 'node:url'
+import { resolve } from 'node:path'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   build: {
@@ -10,6 +10,6 @@ export default defineConfig({
       name: 'SVG_SKETCHY',
       // the proper extensions will be added
       fileName: 'svg-sketchy',
-    }
-  }
-});
+    },
+  },
+})
