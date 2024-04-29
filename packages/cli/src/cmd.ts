@@ -54,6 +54,10 @@ class InnerSpinner {
     );
   }
 
+  start(text: string) {
+    this.spinner.start(text);
+  }
+
   stop() {
     this.spinner.stop();
   }
@@ -113,27 +117,36 @@ program
     let svgCount = 0;
     let hasFailedSvg = false;
     const start = performance.now();
+    const genMsg ='Generating svg sketch...';
 
-    const spinner = new InnerSpinner(ora('generating svg sketch...').start());
+    const spinner = new InnerSpinner(ora(genMsg).start());
 
     runner.on(SVGSketcherEventName.DOWNLOAD_COMPLETED, (e) => {
       svgCount++;
       spinner.info(formatMessage(e));
+      spinner.start(genMsg);
     });
 
     runner.on(SVGSketcherEventName.DOWNLOAD_FAIL, (e) => {
       hasFailedSvg = true;
       spinner.fail(formatMessage(e, true));
+      spinner.start(genMsg);
     });  
 
     await runner.run();
 
-    console.log('\n');
     if(hasFailedSvg) {
-      spinner.fail(`please make sure that failed files have correct format and then retry sketching`);
+      spinner.fail(`Please make sure that failed files have correct format and then retry sketching`);
     }
-    spinner.succeed(`total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms!`);
+    spinner.succeed(`Total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms! `);
     spinner.stop();
+
+    console.log("Waiting for exiting...");
+
+    process.on("beforeExit", () => {
+      process.stdout.moveCursor(0, -1); 
+      process.stdout.clearLine(1);
+    });
   });
 
-program.parseAsync();
+program.parse();

@@ -8,6 +8,7 @@ describe('test cmd', () => {
   const mockSpinner = {
     stopAndPersist: vi.fn(),
     stop: vi.fn(),
+    start: vi.fn(),
   };
   const mockOra = vi.fn().mockReturnValue({
     start: () => mockSpinner
