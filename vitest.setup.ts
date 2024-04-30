@@ -7,7 +7,7 @@ beforeAll(async () => {
   globalThis.TMP = resolve(process.cwd(), 'packages/cli/tmp')
   globalThis.FIXTURE = resolve(process.cwd(), 'packages/cli/__tests__/fixtures')
   globalThis.readFixtures = async (file: string) => {
-    return readFile(resolve(globalThis.FIXTURE, file), 'utf-8')
+    return readFile(resolve(globalThis.FIXTURE, file), 'utf8')
   }
   globalThis.EXT = {
     svg: '.svg',
@@ -43,7 +43,7 @@ beforeAll(async () => {
 
     return () => {
       return Promise.all(svgs.map((file) => {
-        return readFile(resolve(globalThis.TMP, `${file}.svg`), { encoding: 'utf-8' })
+        return readFile(resolve(globalThis.TMP, `${file}.svg`), { encoding: 'utf8' })
       }))
     }
   }

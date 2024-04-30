@@ -1,10 +1,10 @@
+/// <reference types="svg-sketchy.client/types" />
 import { basename, dirname, isAbsolute, join } from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { accessSync } from 'node:fs'
-import EventEmitter from 'node:events'
 import process from 'node:process'
 import { Buffer } from 'node:buffer'
-import pp, { type CDPSession } from 'puppeteer'
+import pp from 'puppeteer'
 import fg, { isDynamicPattern } from 'fast-glob'
 import type { Svg2Roughjs } from 'svg2roughjs'
 
@@ -14,22 +14,11 @@ const svgExtReg = /\.svg$/
 const extReg = /([^/]+)\.(svg|dot)$/
 const namePattern = '[name]'
 
-type Svg2RoughjsConfig = Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' | 'randomize' | 'pencilFilter' | 'sketchPatterns'>
+type Svg2RoughjsConfig = Partial<Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' | 'randomize' | 'pencilFilter' | 'sketchPatterns'>>
 
 export enum FileType {
   SVG = 'svg',
   DOT = 'dot',
-}
-
-export enum SVGSketcherEventName {
-  DOWNLOAD_START = 'download_start',
-  DOWNLOAD_COMPLETED = 'download_completed',
-  DOWNLOAD_FAIL = 'download_fail',
-}
-
-export interface SVGSketcherEventData {
-  svg: string
-  out: string
 }
 
 export type SVGSketcherConfig = Svg2RoughjsConfig & {
@@ -38,12 +27,13 @@ export type SVGSketcherConfig = Svg2RoughjsConfig & {
   output?: string
 }
 
-export class SVGSketcher extends EventEmitter {
+export class SVGSketcher {
   private root: string
   private outputDir: string
   private outputFileName: string = '[name].svg'
   private inputFiles: string[] = []
   private outputFiles: string[] = []
+  // @ts-expect-error module resolve in cjs&esm
   private clientPath: string = require?.resolve ? require.resolve(clientEntry) : import.meta.resolve(clientEntry)
   private htmlHead = Buffer.from(`
 <!doctype html>
@@ -65,8 +55,6 @@ export class SVGSketcher extends EventEmitter {
       ...sketchConfig
     }: SVGSketcherConfig = {},
   ) {
-    super()
-
     this.root = root
     this.sketchConfig = sketchConfig
     this.parseOutput(output ?? root)
@@ -113,7 +101,7 @@ export class SVGSketcher extends EventEmitter {
 
     this.outputFiles = this.inputFiles.map((filePath) => {
       const [,name] = basename(filePath).match(extReg)
-      return this.outputFileName.replace(namePattern, name)
+      return join(this.outputDir, this.outputFileName.replace(namePattern, name))
     })
   }
 
@@ -175,70 +163,38 @@ export class SVGSketcher extends EventEmitter {
     return htmlBuf
   }
 
-  private async waitUntilDownload(session: CDPSession) {
-    const downloadingSvgs = {}
-    session.off('Browser.downloadWillBegin')
-    session.off('Browser.downloadProgress')
-
-    return new Promise((resolve) => {
-      session.on('Browser.downloadWillBegin', (e) => {
-        this.emit(SVGSketcherEventName.DOWNLOAD_START, e.suggestedFilename)
-        downloadingSvgs[e.guid] = e.suggestedFilename
-      })
-
-      session.on('Browser.downloadProgress', (e) => {
-        const isCompleted = e.state === 'completed'
-        const isCanceled = e.state === 'canceled'
-
-        if (isCompleted || isCanceled) {
-          const downloadFileName = downloadingSvgs[e.guid]
-          delete downloadingSvgs[e.guid]
-
-          if (downloadFileName) {
-            const index = this.outputFiles.indexOf(downloadFileName)
-            this.emit(
-              isCompleted ? SVGSketcherEventName.DOWNLOAD_COMPLETED : SVGSketcherEventName.DOWNLOAD_FAIL,
-              {
-                svg: this.inputFiles[index],
-                out: join(this.outputDir, downloadFileName),
-              } as SVGSketcherEventData,
-            )
-
-            if (isCompleted) {
-              this.inputFiles.splice(index, 1)
-              this.outputFiles.splice(index, 1)
-            }
-          }
-        }
-
-        if (Object.keys(downloadingSvgs).length === 0)
-          resolve(true)
-      })
-
-      setTimeout(resolve, 3000)
-    })
-  }
-
   async run() {
     const browser = await pp.launch({ headless: true })
-    const session = await browser.target().createCDPSession()
-    await session.send('Browser.setDownloadBehavior', {
-      behavior: 'allow',
-      downloadPath: this.outputDir,
-      eventsEnabled: true,
+    const page = await browser.newPage()
+
+    const htmlBuf = await this.computeHtml()
+    await page.setContent(htmlBuf!.toString())
+    const results = await page.evaluate(async () => {
+      const svgs = await window.sketchSvg()
+
+      // @ts-expect-error it's ok reading value & reason from PromiseSettledResult
+      return svgs.map(({ value, reason }) => {
+        return {
+          error: reason ?? (value ? undefined : 'sketch error'),
+          svg: value?.outerHTML,
+        }
+      })
     })
 
-    while (this.inputFiles.length) {
-      const page = await browser.newPage()
-      const htmlBuf = await this.computeHtml()
-      const navigation = page.setContent(htmlBuf!.toString())
-      const downloadProgress = this.waitUntilDownload(session)
+    await Promise.allSettled(results.map((re, index) => {
+      if (!re.error)
+        return writeFile(this.outputFiles[index], re.svg)
 
-      await navigation
-      await downloadProgress
-      page.close()
-    }
+      return null
+    }))
 
+    await page.close()
     await browser.close()
+
+    return results.map((re, index) => ({
+      ...re,
+      file: this.inputFiles[index],
+      out: this.outputFiles[index],
+    }))
   }
 }

@@ -103,7 +103,9 @@ describe('test cmd', () => {
           mockConstructor(`window.SKETCH_CONFIG=${JSON.stringify(config)}`)
         }
 
-        run() {}
+        run() {
+          return []
+        }
       },
     }))
 

@@ -1,11 +1,10 @@
-import process from 'node:process'
 import { Command } from 'commander'
 import type { Ora } from 'ora'
 import ora from 'ora'
 import chalk from 'chalk'
 import pkgJson from '../package.json'
-import type { SVGSketcherConfig, SVGSketcherEventData } from './sketcher'
-import { SVGSketcher, SVGSketcherEventName } from './sketcher'
+import type { SVGSketcherConfig } from './sketcher'
+import { SVGSketcher } from './sketcher'
 
 interface Args {
   target?: string
@@ -20,8 +19,8 @@ interface Args {
 
 const program = new Command()
 
-function formatMessage({ svg, out }: SVGSketcherEventData, failed: boolean = false) {
-  return `${svg} ${chalk[failed ? 'redBright' : 'greenBright']('➜')} ${out}`
+function formatMessage({ error, file, out }: { file?: string, out?: string, error?: string }) {
+  return `${file} ${chalk[error ? 'redBright' : 'greenBright']('➜')} ${out}${error ? `: ${chalk.redBright(error)}` : ''}`
 }
 
 class InnerSpinner {
@@ -112,39 +111,24 @@ program
     options.target = target
     const runner = new SVGSketcher(args2SketchConfig(options))
 
-    let svgCount = 0
-    let hasFailedSvg = false
     const start = performance.now()
     const genMsg = 'Generating svg sketch...'
 
     const spinner = new InnerSpinner(ora(genMsg).start())
 
-    runner.on(SVGSketcherEventName.DOWNLOAD_COMPLETED, (e) => {
-      svgCount++
-      spinner.info(formatMessage(e))
-      spinner.start(genMsg)
+    const results = await runner.run()
+
+    results.forEach((re) => {
+      if (re.error)
+        spinner.fail(formatMessage(re))
+      else
+        spinner.info(formatMessage(re))
     })
 
-    runner.on(SVGSketcherEventName.DOWNLOAD_FAIL, (e) => {
-      hasFailedSvg = true
-      spinner.fail(formatMessage(e, true))
-      spinner.start(genMsg)
-    })
+    const successCount = results.filter(re => !re.error).length
 
-    await runner.run()
-
-    if (hasFailedSvg)
-      spinner.fail(`Please make sure that failed files have correct format and then retry sketching`)
-
-    spinner.succeed(`Total ${svgCount} svgs sketched in ${Math.floor(performance.now() - start)}ms! `)
+    spinner.succeed(`Total ${successCount} svg${successCount > 1 ? 's' : ''} sketched in ${Math.floor(performance.now() - start)}ms! `)
     spinner.stop()
-
-    console.log('Waiting for exiting...')
-
-    process.on('beforeExit', () => {
-      process.stdout.moveCursor(0, -1)
-      process.stdout.clearLine(1)
-    })
   })
 
 program.parse()
