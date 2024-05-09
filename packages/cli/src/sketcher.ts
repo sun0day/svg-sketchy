@@ -11,7 +11,7 @@ import type { Svg2Roughjs } from 'svg2roughjs'
 const cwd = process.cwd()
 const clientEntry = 'svg-sketchy.client/dist/svg-sketchy.iife.js'
 const svgExtReg = /\.svg$/
-const extReg = /([^/]+)\.(svg|dot)$/
+const extReg = /([^/]+)\.(svg|dot|mmd)$/
 const namePattern = '[name]'
 
 type Svg2RoughjsConfig = Partial<Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' | 'randomize' | 'pencilFilter' | 'sketchPatterns'>>
@@ -19,6 +19,7 @@ type Svg2RoughjsConfig = Partial<Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' 
 export enum FileType {
   SVG = 'svg',
   DOT = 'dot',
+  MMD = 'mmd',
 }
 
 export type SVGSketcherConfig = Svg2RoughjsConfig & {
@@ -97,7 +98,7 @@ export class SVGSketcher {
       .sort((next, cur) => svgExtReg.test(cur) ? 1 : -1)
 
     if (this.inputFiles.length < 1)
-      throw new Error(`No .svg, .dot files found!`)
+      throw new Error(`No .svg, .dot, .mmd files found!`)
 
     this.outputFiles = this.inputFiles.map((filePath) => {
       const [,name] = basename(filePath).match(extReg)
@@ -111,7 +112,6 @@ export class SVGSketcher {
 
   private async computeHtml() {
     const SVG_FILES = []
-    const svgFiles = []
     const otherFiles = []
     const svgs = []
     const others = []
@@ -126,14 +126,13 @@ export class SVGSketcher {
         const out = this.outputFiles[index]
 
         if (svgExtReg.test(file)) {
-          svgFiles.push(file)
           svgs.push(content)
         }
         else {
           otherFiles.push(file)
           others.push(content)
           dsl = content.toString()
-          fileType = FileType.DOT
+          fileType = file.includes(FileType.DOT) ? FileType.DOT : FileType.MMD
         }
 
         SVG_FILES.push({ out, dsl, type: fileType })
@@ -170,12 +169,12 @@ export class SVGSketcher {
     const htmlBuf = await this.computeHtml()
     await page.setContent(htmlBuf!.toString())
     const results = await page.evaluate(async () => {
-      const svgs = await window.sketchSvg()
+      const svgs = await window.sketchSvg(window.SVG_FILES)
 
       // @ts-expect-error it's ok reading value & reason from PromiseSettledResult
       return svgs.map(({ value, reason }) => {
         return {
-          error: reason ?? (value ? undefined : 'sketch error'),
+          error: reason?.toString() || (value ? undefined : 'sketch error'),
           svg: value?.outerHTML,
         }
       })

@@ -70,7 +70,7 @@ describe('test cmd', () => {
   })
 
   it('handle target files not found', async () => {
-    const notFound = 'No .svg, .dot files found'
+    const notFound = 'No .svg, .dot, .mmd files found'
     // root not exists
     await import(cmdFile)
 

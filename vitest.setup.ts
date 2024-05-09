@@ -12,10 +12,12 @@ beforeAll(async () => {
   globalThis.EXT = {
     svg: '.svg',
     dot: '.dot',
+    mmd: '.mmd',
   }
   globalThis.EXT_CONTENT = {
     svg: await globalThis.readFixtures('a.svg'),
     dot: await globalThis.readFixtures('a.dot'),
+    mmd: await globalThis.readFixtures('a.mmd'),
   }
   globalThis.reset = () => {
     vi.resetModules()
@@ -24,7 +26,7 @@ beforeAll(async () => {
   globalThis.mockArgv = (argvs: string[]) => {
     process.argv = process.argv.slice(0, 2).concat(argvs)
   }
-  globalThis.createSvgs = async (num: number, type: 'svg' | 'dot' = 'svg') => {
+  globalThis.createSvgs = async (num: number, type: 'svg' | 'dot' | 'mmd' = 'svg') => {
     const svgs: string[] = []
 
     await Promise.all(
