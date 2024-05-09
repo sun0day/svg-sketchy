@@ -28,17 +28,17 @@ $ sket hello_*.svg # sketch multiple svgs which paths start with "hello_" and ov
 $ sket world.svg -o /home/hello_[name].svg # sketch svg and output it to a new directory with a new name "hello_world.svg"
 ```
 
-#### sketch `.dot`
+#### sketch `.dot` & `.mmd`
 
-Sketching `.dot` files is not much different than sketching `.svg`. Suppose we have a file named `hello_world.dot`:
+Sketching `.dot` & `.mmd` files is not much different than sketching `.svg`. Suppose we have two files named `hello_world.dot` and `hello_world.mmd`, after sketching, the outputs would look like:
 
-```shell
-digraph G {Hello->World}
-```
-
-After `sket hello_world.dot`, there would be a new svg `hello_world.svg` like:
-
-![image](https://github.com/sun0day/svg-sketchy/assets/102238922/acf78da2-3ac8-485d-8fcd-bb3fabe9b09f)
+||`hello_world.dot`|`hello_world.mmd`|
+|----|:-----:|:-----:|
+|dsl|`digraph G {Hello->World}`| `graph TB\nhello-->world`
+|cmd|`sket hello_world.dot` | `sket hello_world.mmd`
+|outputs without sketching|![dot](https://github.com/sun0day/svg-sketchy/assets/102238922/143f8e53-a562-46af-af79-b4bf9751d767)|<img src="https://github.com/sun0day/svg-sketchy/assets/102238922/0a5fc6e4-8dcd-45d5-b46a-3976bfb03d42" height="160px"/>
+| &nbsp;| &nbsp;|
+|outputs after sketching|![dot_sketch](https://github.com/sun0day/svg-sketchy/assets/102238922/acf78da2-3ac8-485d-8fcd-bb3fabe9b09f)|<img src="https://github.com/sun0day/svg-sketchy/assets/102238922/452ec4e0-670d-4f40-9a2f-31c75ff5c871" height="160px" />
 
 #### customize sketch style
 
@@ -78,6 +78,6 @@ const sketcher = new SVGSketcher({
   pencilFilter: true, // <--> --pencil
 })
 
-// start transforming
-sketcher.run()
+// transforming
+await sketcher.run()
 ```
