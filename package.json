@@ -16,7 +16,7 @@
     "@types/node": "^20.12.7",
     "@vitest/coverage-v8": "^1.4.0",
     "@vitest/ui": "^1.4.0",
-    "eslint": "^8.0.0",
+    "eslint": "^9.0.0",
     "lint-staged": "^15.2.2",
     "simple-git-hooks": "^2.11.1",
     "vitest": "^1.4.0"
