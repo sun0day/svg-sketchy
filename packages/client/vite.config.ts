@@ -5,8 +5,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   build: {
     lib: {
-      formats: ['iife'],
-      entry: resolve(fileURLToPath(import.meta.url), '../src/main.ts'),
+      formats: ['iife', 'es'],
+      entry: resolve(fileURLToPath(import.meta.url), '../lib/svg.ts'),
       name: 'SVG_SKETCHY',
       // the proper extensions will be added
       fileName: 'svg-sketchy',

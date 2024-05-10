@@ -5,25 +5,25 @@ import mermaid from 'mermaid'
 
 let viz: Viz | undefined
 
-async function initialize() {
+export async function initialize() {
   mermaid.initialize({ startOnLoad: false })
   viz = await VizInstance()
 }
 
-function createSvgSketcher() {
+export function createSvgSketcher(config: Window['SKETCH_CONFIG'] = window.SKETCH_CONFIG) {
   const svgSketcher = new Svg2Roughjs(document.createElementNS('http://www.w3.org/2000/svg', 'svg'))
   svgSketcher.outputType = 0
 
-  Object.keys(window.SKETCH_CONFIG ?? {}).forEach((key) => {
+  Object.keys(config ?? {}).forEach((key) => {
     // @ts-expect-error Svg2Roughjs key
-    svgSketcher[key] = window.SKETCH_CONFIG[key as keyof Window['SKETCH_CONFIG']]
+    svgSketcher[key] = config[key as keyof Window['SKETCH_CONFIG']]
   })
 
   return svgSketcher
 }
 
 // download svg
-window.downloadSvg = (svg: SVGSVGElement, out: string) => {
+export function downloadSvg(svg: SVGSVGElement, out: string) {
   const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' })
   const svgUrl = URL.createObjectURL(blob)
   const aDom = document.createElement('a')
@@ -36,7 +36,7 @@ window.downloadSvg = (svg: SVGSVGElement, out: string) => {
 }
 
 // sketch svg, dot, mmd
-window.sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
+export const sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
   if (!viz)
     await initialize()
 
@@ -72,3 +72,6 @@ window.sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
 
   return svgOutputs
 }
+
+window.downloadSvg = downloadSvg
+window.sketchSvg = sketchSvg
