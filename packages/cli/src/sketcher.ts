@@ -1,4 +1,4 @@
-/// <reference types="svg-sketchy.client/types" />
+/// <reference types="svg-sketchy.client-api/types" />
 import { basename, dirname, isAbsolute, join } from 'node:path'
 import { readFile, writeFile } from 'node:fs/promises'
 import { accessSync } from 'node:fs'
@@ -9,7 +9,7 @@ import fg, { isDynamicPattern } from 'fast-glob'
 import type { Svg2Roughjs } from 'svg2roughjs'
 
 const cwd = process.cwd()
-const clientEntry = 'svg-sketchy.client/dist/svg-sketchy.iife.js'
+const clientEntry = 'svg-sketchy.client-api/dist/svg-sketchy.iife.js'
 const svgExtReg = /\.svg$/
 const extReg = /([^/]+)\.(svg|dot|mmd)$/
 const namePattern = '[name]'

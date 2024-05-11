@@ -3,7 +3,7 @@ import type { GlobalThemeOverrides } from 'naive-ui'
 import { NConfigProvider } from 'naive-ui'
 
 import HelloWorld from './components/HelloWorld.vue'
-// import { downloadSvg  } from 'svg-sketchy.client'
+// import { downloadSvg  } from 'svg-sketchy.client-api'
 const themeOverrides: GlobalThemeOverrides = {}
 </script>
 

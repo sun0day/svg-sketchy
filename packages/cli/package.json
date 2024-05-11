@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "puppeteer": "^22.6.3",
-    "svg-sketchy.client": "workspace: *"
+    "svg-sketchy.client-api": "workspace: *"
   },
   "devDependencies": {
     "chalk": "^5.3.0",
