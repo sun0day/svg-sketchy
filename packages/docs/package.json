@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "svg-sketchy.docs",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -13,8 +13,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
+    "naive-ui": "^2.38.2",
     "svg-sketchy.client": "workspace: *",
     "typescript": "^5.0.2",
+    "unocss": "^0.60.0",
+    "vfonts": "^0.0.3",
     "vite": "^4.4.5",
     "vue-tsc": "^1.8.5"
   }
