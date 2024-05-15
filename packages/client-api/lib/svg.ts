@@ -58,7 +58,10 @@ export const sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
         svgSketcher.svg = document.querySelector(`#${mmdId}`)!
         break
       default:
-        svgSketcher.svg = dsl as SVGSVGElement
+        svgSketcher.svg
+          = typeof dsl === 'string'
+            ? (new DOMParser().parseFromString(dsl, 'image/svg+xml').querySelector('svg')!)
+            : dsl
         break
     }
 
