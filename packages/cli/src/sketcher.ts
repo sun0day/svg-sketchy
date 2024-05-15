@@ -169,6 +169,11 @@ export class SVGSketcher {
     const htmlBuf = await this.computeHtml()
     await page.setContent(htmlBuf!.toString())
     const results = await page.evaluate(async () => {
+      const svgDoms = document.querySelectorAll('svg')
+      window.SVG_FILES.forEach((svgFile, index) => {
+        if (svgFile.type === 'svg')
+          svgFile.dsl = svgDoms[index]
+      })
       const svgs = await window.sketchSvg(window.SVG_FILES)
 
       // @ts-expect-error it's ok reading value & reason from PromiseSettledResult

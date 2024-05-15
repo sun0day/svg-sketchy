@@ -23,13 +23,14 @@ export function createSvgSketcher(config: Window['SKETCH_CONFIG'] = window.SKETC
 }
 
 // download svg
-export function downloadSvg(svg: SVGSVGElement, out: string) {
+export function downloadSvg(svg: SVGSVGElement, filename: string) {
   const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' })
   const svgUrl = URL.createObjectURL(blob)
   const aDom = document.createElement('a')
 
+  aDom.style.visibility = 'hidden'
   aDom.href = svgUrl
-  aDom.download = out
+  aDom.download = filename
   document.body.appendChild(aDom)
   aDom.click()
   document.body.removeChild(aDom)
@@ -40,7 +41,6 @@ export const sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
   if (!viz)
     await initialize()
 
-  const SVG_DOMS = document.querySelectorAll('svg') ?? []
   const svgOutputs = await Promise.allSettled(svgInputs.map(async ({ dsl, type }, index) => {
     const svgSketcher = createSvgSketcher()
 
@@ -49,16 +49,16 @@ export const sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
 
     switch (type) {
       case 'dot':
-        svgSketcher.svg = viz!.renderSVGElement(dsl!)
+        svgSketcher.svg = viz!.renderSVGElement(dsl as string)
         break
       case 'mmd':
         mmdContainer = document.createElement('div')
         document.body.appendChild(mmdContainer)
-        mmdContainer.innerHTML = (await mermaid.render(mmdId, dsl!))?.svg
+        mmdContainer.innerHTML = (await mermaid.render(mmdId, dsl as string))?.svg
         svgSketcher.svg = document.querySelector(`#${mmdId}`)!
         break
       default:
-        svgSketcher.svg = SVG_DOMS[index]
+        svgSketcher.svg = dsl as SVGSVGElement
         break
     }
 

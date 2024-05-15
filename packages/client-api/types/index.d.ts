@@ -7,7 +7,7 @@ export const sketchSvg: (svgInputs: Window['SVG_FILES']) => Promise<PromiseSettl
 
 declare global {
   interface Window {
-    SVG_FILES: { out: string, dsl: string | null, type: 'svg' | 'dot' | 'mmd' }[]
+    SVG_FILES: { out: string, dsl: string | SVGSVGElement, type: 'svg' | 'dot' | 'mmd' }[]
     SKETCH_CONFIG: Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' | 'randomize' | 'pencilFilter' | 'sketchPatterns'>
     downloadSvg: typeof downloadSvg
     sketchSvg: typeof sketchSvg
