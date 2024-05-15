@@ -18,11 +18,30 @@ function onRemove(fileData: { index: number }) {
 </script>
 
 <template>
-  <NUpload class="p-[16px]" list-type="image-card" accept=".svg,.dot" :file-list="uploadSvgs.value" @before-upload="onBeforeUpload" @remove="onRemove" />
+  <NUpload
+    class="p-[16px]"
+    list-type="image-card"
+    accept=".svg,.dot"
+    :file-list="uploadSvgs.value"
+    @before-upload="onBeforeUpload"
+    @remove="onRemove"
+  />
 </template>
 
 <style  lang="less">
+  .n-upload-file-list .n-upload-file:hover {
+    background: rgba(243, 243, 245, 0.3);
+  }
+
   .n-upload-trigger.n-upload-trigger--image-card {
-    order: -1
+    order: -1;
+
+    .n-upload-dragger {
+      border-radius: 8px;
+    }
+  }
+
+  .n-upload-file-list .n-upload-file.n-upload-file--image-card-type {
+    border-radius: 8px;
   }
 </style>

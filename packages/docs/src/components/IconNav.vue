@@ -4,15 +4,15 @@ import { NIcon } from 'naive-ui'
 </script>
 
 <template>
-  <div fixed pos-right-24px pos-top-16px z-100>
+  <div fixed pos-right-48px pos-top-16px z-100>
     <a href="https://github.com/sun0day/svg-sketchy" target="_blank">
-      <NIcon size="32" class="ml-[16px] cursor-pointer">
+      <NIcon size="32" class="icon-nav shadow-highlight">
         <LogoGithub />
       </NIcon>
     </a>
 
     <a href="https://github.com/sun0day/svg-sketchy" target="_blank">
-      <NIcon size="32" class="ml-[16px] cursor-pointer">
+      <NIcon size="32" class="icon-nav shadow-highlight">
         <LogoNpm />
       </NIcon>
     </a>
