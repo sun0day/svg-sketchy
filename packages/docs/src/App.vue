@@ -1,38 +1,28 @@
 <script setup lang="ts">
 import type { GlobalThemeOverrides } from 'naive-ui'
-import { NConfigProvider } from 'naive-ui'
+import { NConfigProvider, NFlex } from 'naive-ui'
 
 import HelloWorld from './components/HelloWorld.vue'
+import UploadList from './components/UploadList.vue'
+import IconNav from './components/IconNav.vue'
+import SvgPreview from './components/SvgPreview.vue'
+
 // import { downloadSvg  } from 'svg-sketchy.client-api'
 const themeOverrides: GlobalThemeOverrides = {}
 </script>
 
 <template>
   <NConfigProvider :theme-overrides="themeOverrides">
-    <div class="text-blue" bg="red-400">
-      xxx
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo" alt="Vite logo">
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo">
-      </a>
-    </div>
-    <HelloWorld />
+    <IconNav />
+    <UploadList />
+
+    <Flex>
+      form
+      <SvgPreview />
+    </Flex>
   </NConfigProvider>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
