@@ -29,11 +29,7 @@ function onRemove(fileData: { index: number }) {
 </template>
 
 <style  lang="less">
-  .n-upload-file-list .n-upload-file:hover {
-    background: rgba(243, 243, 245, 0.3);
-  }
-
-  .n-upload-trigger.n-upload-trigger--image-card {
+.n-upload-trigger.n-upload-trigger--image-card {
     order: -1;
 
     .n-upload-dragger {
@@ -42,6 +38,19 @@ function onRemove(fileData: { index: number }) {
   }
 
   .n-upload-file-list .n-upload-file.n-upload-file--image-card-type {
+    background-color: var(--color-bg-thumbnail);
     border-radius: 8px;
+
+    &:hover {
+      background-color: var(--color-bg-thumbnail-hover);
+    }
+  }
+
+  .n-upload-file-info__action.n-upload-file-info__action--image-card-type {
+    button {
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
   }
 </style>

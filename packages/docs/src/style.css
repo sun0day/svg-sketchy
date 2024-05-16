@@ -1,27 +1,38 @@
+:root {
+  --color-primary: rgb(99, 226, 183);
+  --color-text-primary: rgba(255, 255, 255, 0.82);
+  --color-divider: rgba(255, 255, 255, 0.2);
+  --color-bg-primary: rgb(16, 16, 20);
+  --color-bg-preview: #fff;
+  --color-bg-thumbnail: var(--color-text-primary);
+  --color-bg-thumbnail-hover: var(--color-divider);
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
 div {
   box-sizing: border-box;
 }
 
-.shadow-highlight {
-  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
-}
-
 @keyframes shadowOut {
   0% {
-    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+    box-shadow: 0px 3px 6px 0px rgba(255, 255, 255, 0.8), 0px 1px 3px 1px rgba(255, 255, 255, 0.6);
   }
 
   100% {
-    box-shadow: 0;
+    box-shadow: 0px 3px 6px 0px rgba(255, 255, 255, 0.3), 0px 1px 3px 1px rgba(255, 255, 255, 0.3);
   }
 }
 
 @keyframes shadowIn {
   100% {
-    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+    box-shadow: 0px 3px 6px 0px rgba(255, 255, 255, 0.8), 0px 1px 3px 1px rgba(255, 255, 255, 0.6);
   }
 
   0% {
-    box-shadow: 0;
+    box-shadow: 0px 3px 6px 0px rgba(255, 255, 255, 0.3), 0px 1px 3px 1px rgba(255, 255, 255, 0.3);
   }
 }

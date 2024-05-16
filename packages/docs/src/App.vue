@@ -1,24 +1,32 @@
 <script setup lang="ts">
 import type { GlobalThemeOverrides } from 'naive-ui'
-import { NConfigProvider, NDivider, NFlex } from 'naive-ui'
+import { NConfigProvider, NDivider, NFlex, darkTheme } from 'naive-ui'
 
 import UploadList from './components/UploadList.vue'
 import IconNav from './components/IconNav.vue'
 import SvgPreview from './components/SvgPreview.vue'
 
-const themeOverrides: GlobalThemeOverrides = {}
+const themeOverrides: GlobalThemeOverrides = {
+  Divider: {
+    color: 'var(--color-divider)',
+  },
+}
 </script>
 
 <template>
-  <NConfigProvider :theme-overrides="themeOverrides">
+  <NConfigProvider :theme-overrides="themeOverrides" class="h-[100vh]" :theme="darkTheme">
     <IconNav />
-    <UploadList />
+    <NFlex vertical :size="[0, 0]" class="h-[100%]">
+      <UploadList />
 
-    <NDivider />
+      <NDivider />
 
-    <NFlex justify="space-between">
-      form
-      <SvgPreview />
+      <NFlex justify="space-between" class="flex-1">
+        <div style="max-width: 200px; flex: 1">
+          form
+        </div>
+        <SvgPreview />
+      </NFlex>
     </NFlex>
   </NConfigProvider>
 </template>
