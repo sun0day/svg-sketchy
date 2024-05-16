@@ -4,6 +4,7 @@ export function initialize(): void
 export function createSvgSketcher(config?: Window['SVG_FILES']): Svg2Roughjs
 export const downloadSvg: (svg: SVGSVGElement, filename: string) => void
 export const sketchSvg: (svgInputs: Window['SVG_FILES']) => Promise<PromiseSettledResult<SVGSVGElement | null>[]>
+export const fetchSvg: (url: string) => Promise<Blob>
 
 declare global {
   interface Window {

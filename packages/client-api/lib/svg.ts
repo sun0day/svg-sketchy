@@ -5,6 +5,20 @@ import mermaid from 'mermaid'
 
 let viz: Viz | undefined
 
+function initSvgDom(svg: string) {
+  const container = document.createElement('div')
+  Object.assign(container.style, {
+    position: 'fixed',
+    top: '-10000px',
+  })
+
+  const svgDom = new DOMParser().parseFromString(svg, 'image/svg+xml').querySelector('svg')!
+  container.appendChild(svgDom)
+  document.body.appendChild(container)
+
+  return svgDom
+}
+
 export async function initialize() {
   mermaid.initialize({ startOnLoad: false })
   viz = await VizInstance()
@@ -36,39 +50,32 @@ export function downloadSvg(svg: SVGSVGElement, filename: string) {
   document.body.removeChild(aDom)
 }
 
+// fetch svg
+export function fetchSvg(url: string) {
+  return fetch(url).then(res => res.blob())
+}
+
 // sketch svg, dot, mmd
 export const sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
   if (!viz)
     await initialize()
 
-  const svgOutputs = await Promise.allSettled(svgInputs.map(async ({ dsl, type }, index) => {
+  const svgOutputs = await Promise.allSettled(svgInputs.map(async ({ dsl, type }) => {
     const svgSketcher = createSvgSketcher()
-
-    let mmdContainer = null
-    const mmdId = `mmd-${index}`
 
     switch (type) {
       case 'dot':
         svgSketcher.svg = viz!.renderSVGElement(dsl as string)
         break
       case 'mmd':
-        mmdContainer = document.createElement('div')
-        document.body.appendChild(mmdContainer)
-        mmdContainer.innerHTML = (await mermaid.render(mmdId, dsl as string))?.svg
-        svgSketcher.svg = document.querySelector(`#${mmdId}`)!
+        svgSketcher.svg = initSvgDom((await mermaid.render('x', dsl as string))?.svg)
         break
       default:
-        svgSketcher.svg
-          = typeof dsl === 'string'
-            ? (new DOMParser().parseFromString(dsl, 'image/svg+xml').querySelector('svg')!)
-            : dsl
+        svgSketcher.svg = typeof dsl === 'string' ? initSvgDom(dsl) : dsl
         break
     }
 
     const sketchSvg = await svgSketcher.sketch()
-
-    if (mmdContainer)
-      document.body.removeChild(mmdContainer)
 
     return sketchSvg as SVGSVGElement | null
   }))

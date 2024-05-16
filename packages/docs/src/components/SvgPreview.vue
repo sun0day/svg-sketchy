@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { sketchSvg } from 'svg-sketchy.client-api'
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import svgPanZoom from 'svg-pan-zoom'
 import { useUploadSvgs } from '../store'
 
@@ -17,8 +17,24 @@ function computeSvgPreviewSize(svg: SVGSVGElement, container: HTMLElement) {
   const containerHeight = containerSize.height * 0.85
 
   return {
-    width: `${Math.max(svgRatio >= 1 ? containerWidth : containerHeight * svgRatio, containerWidth / 2)}px`,
-    height: `${Math.max(svgRatio <= 1 ? containerHeight : containerWidth / svgRatio, containerHeight / 2)}px`,
+    width: `${
+      Math.min(
+        containerWidth,
+        Math.max(
+          svgRatio >= 1 ? containerWidth : containerHeight * svgRatio,
+          containerWidth / 2,
+        ),
+     )
+    }px`,
+    height: `${
+      Math.min(
+          containerHeight,
+          Math.max(
+            svgRatio <= 1 ? containerHeight : containerWidth / svgRatio,
+            containerHeight / 2,
+          ),
+      )
+    }px`,
   }
 }
 

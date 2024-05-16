@@ -5,6 +5,8 @@ import { useUploadSvgs } from '../store'
 
 const uploadSvgs = useUploadSvgs()
 
+uploadSvgs.init()
+
 async function onBeforeUpload(fileData: { file: UploadFileInfo }) {
   uploadSvgs.value.unshift(
     { ...fileData.file, status: 'finished' },
