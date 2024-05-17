@@ -72,7 +72,7 @@ watch([svgs, sketchOptions, refresher], async ([nextSvgs, nextOptions]) => {
 </script>
 
 <template>
-  <div id="svg-preview" position="relative" flex-1 flex justify-center flex-items-center p="16px" w="100%" h="100%" border-l="1px solid [var(--color-divider)]">
+  <div id="svg-preview" position="relative" flex-1 flex justify-center flex-items-center p="16px" w="100%" h="100%">
     <IconToolkit />
     <div class="svg-container" bg="[var(--color-bg-preview)]" rd="16px" />
   </div>

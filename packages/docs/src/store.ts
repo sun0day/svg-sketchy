@@ -92,3 +92,18 @@ export const useRefreshSvg = defineStore('refresh-svg', {
     },
   },
 })
+
+export const useToolVisible = defineStore('tool-visible', {
+  state: () => {
+    return {
+      value: {
+        settings: true,
+      },
+    }
+  },
+  actions: {
+    toggleSettings() {
+      this.value.settings = !this.value.settings
+    },
+  },
+})
