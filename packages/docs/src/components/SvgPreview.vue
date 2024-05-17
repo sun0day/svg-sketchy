@@ -2,16 +2,16 @@
 import { sketchSvg } from 'svg-sketchy.client-api'
 import { computed, watch } from 'vue'
 import svgPanZoom from 'svg-pan-zoom'
-import { useUploadSvgs } from '../store'
+import { useRefreshSvg, useSketchOptions, useUploadSvgs } from '../store'
+import IconToolkit from './IconToolkit.vue'
 
 const svgs = useUploadSvgs()
+const sketchOptions = useSketchOptions()
+const refresher = useRefreshSvg()
 
-function computeSvgPreviewSize(svg: SVGSVGElement, container: HTMLElement) {
+function computeSvgPreviewSize(svg: SVGSVGElement, [containerWidth, containerHeight]: number[]) {
   const svgSize = svg.getBoundingClientRect()
   const svgRatio = svgSize.width / svgSize.height
-  const containerSize = container.getBoundingClientRect()
-  const containerWidth = containerSize.width * 0.85
-  const containerHeight = containerSize.height * 0.85
 
   return {
     width: `${
@@ -35,25 +35,32 @@ function computeSvgPreviewSize(svg: SVGSVGElement, container: HTMLElement) {
   }
 }
 
-watch(svgs, async (fileData) => {
-  const selectedSvg = fileData.selectedSvg
-  const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await selectedSvg?.file!.text() }]))[0]
+watch([svgs, sketchOptions, refresher], async ([nextSvgs, nextOptions]) => {
+  const selectedSvg = nextSvgs.selectedSvg
+  const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await selectedSvg?.file!.text() }], nextOptions.value))[0]
   const sketchedDom = (sketchResult as PromiseFulfilledResult<SVGSVGElement>).value
 
   const root = document.getElementById('svg-preview')!
-  const container = root.querySelector('div')!
+  const container = root.querySelector('.svg-container')! as HTMLDivElement
   const prevSvg = container.childNodes[0]
 
   if (prevSvg)
     container.removeChild(prevSvg)
 
+  // get root size
+  const rootSize = root.getBoundingClientRect()
+  const rootWidth = rootSize.width * 0.85
+  const rootHeight = rootSize.height * 0.85
+
   container.style.width = 'auto'
   container.style.height = 'auto'
+  container.style.background = nextOptions.value.backgroundColor || ''
 
   if (sketchedDom) {
+    // add sketched dom and get sketched dom origin size
     container.appendChild(sketchedDom)
 
-    Object.assign(container.style, computeSvgPreviewSize(sketchedDom, root))
+    Object.assign(container.style, computeSvgPreviewSize(sketchedDom, [rootWidth, rootHeight]))
 
     const zoomInst = svgPanZoom(sketchedDom, {
       center: true,
@@ -65,13 +72,14 @@ watch(svgs, async (fileData) => {
 </script>
 
 <template>
-  <div id="svg-preview" flex-1 flex justify-center flex-items-center p="16px" w="100%" h="100%" border-l="1px solid [var(--color-divider)]">
-    <div bg="[var(--color-bg-preview)]" rd="16px" />
+  <div id="svg-preview" position="relative" flex-1 flex justify-center flex-items-center p="16px" w="100%" h="100%" border-l="1px solid [var(--color-divider)]">
+    <IconToolkit />
+    <div class="svg-container" bg="[var(--color-bg-preview)]" rd="16px" />
   </div>
 </template>
 
 <style>
- #svg-preview {
+ #svg-preview .svg-container {
    svg {
      width: inherit;
      height: inherit;

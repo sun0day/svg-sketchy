@@ -27,8 +27,7 @@ watch(uploadSvgs, (svgs) => {
       Array.from(uploadList).forEach((fileDom) => {
         fileDom.className = fileDom.className.replace(/(selected)|(shadow.+)/g, '')
       })
-      const selectedSvgDom
-  = uploadList[svgs.selectedIndex]
+      const selectedSvgDom = uploadList[svgs.selectedIndex]
 
       selectedSvgDom.className += ' shadow-highlight-animate '
       setTimeout(() => {

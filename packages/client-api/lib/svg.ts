@@ -2,6 +2,7 @@ import type { Viz } from '@viz-js/viz'
 import { instance as VizInstance } from '@viz-js/viz'
 import { Svg2Roughjs } from 'svg2roughjs'
 import mermaid from 'mermaid'
+import type { SketchOptions } from '../types'
 
 let viz: Viz | undefined
 
@@ -67,12 +68,12 @@ export function fetchSvg(url: string) {
 }
 
 // sketch svg, dot, mmd
-export const sketchSvg = async function (svgInputs: Window['SVG_FILES']) {
+export const sketchSvg = async function (svgInputs: Window['SVG_FILES'], options?: SketchOptions) {
   if (!viz)
     await initialize()
 
   const svgOutputs = await Promise.allSettled(svgInputs.map(async ({ dsl, type }) => {
-    const svgSketcher = createSvgSketcher()
+    const svgSketcher = createSvgSketcher(options)
 
     switch (type) {
       case 'dot':

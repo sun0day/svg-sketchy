@@ -5,6 +5,7 @@ import { NConfigProvider, NDivider, NFlex, darkTheme } from 'naive-ui'
 import UploadList from './components/UploadList.vue'
 import IconNav from './components/IconNav.vue'
 import SvgPreview from './components/SvgPreview.vue'
+import OptionForm from './components/OptionForm.vue'
 
 const themeOverrides: GlobalThemeOverrides = {
   Divider: {
@@ -22,9 +23,7 @@ const themeOverrides: GlobalThemeOverrides = {
       <NDivider />
 
       <NFlex justify="space-between" class="flex-1">
-        <div style="max-width: 200px; flex: 1">
-          form
-        </div>
+        <OptionForm />
         <SvgPreview />
       </NFlex>
     </NFlex>
