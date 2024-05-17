@@ -11,7 +11,16 @@ export const useUploadSvgs = defineStore('upload-svgs', {
       value: [
 
       ] as UploadFileInfo[],
+      selected: '',
     }
+  },
+  getters: {
+    selectedSvg(): UploadFileInfo {
+      return this.value.find(svg => svg.id === this.selected)!
+    },
+    selectedIndex(): number {
+      return this.value.findIndex(svg => svg.id === this.selected)
+    },
   },
   actions: {
     async init() {
@@ -26,10 +35,28 @@ export const useUploadSvgs = defineStore('upload-svgs', {
       this.value = svgs.map((svg, index) => {
         return {
           ...svg,
+          id: `${svg.id}_${Date.now()}`,
           status: 'finished',
           file: new File([svgBlobs[index]], svg.name),
         }
       })
+      this.selected = this.value[0].id
+    },
+
+    upload(file: UploadFileInfo) {
+      this.value.unshift({ ...file, status: 'finished' })
+      this.selected = file.id
+    },
+
+    preview(file: UploadFileInfo) {
+      this.selected = file.id
+    },
+
+    remove(index: number) {
+      const file = this.value.splice(index, 1)
+
+      if (file[0]?.id === this.selected)
+        this.selected = this.value[index % this.value.length]?.id || ''
     },
   },
 })

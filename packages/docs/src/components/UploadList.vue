@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UploadFileInfo } from 'naive-ui'
 import { NUpload } from 'naive-ui'
+import { watch } from 'vue'
 import { useUploadSvgs } from '../store'
 
 const uploadSvgs = useUploadSvgs()
@@ -8,15 +9,35 @@ const uploadSvgs = useUploadSvgs()
 uploadSvgs.init()
 
 async function onBeforeUpload(fileData: { file: UploadFileInfo }) {
-  uploadSvgs.value.unshift(
-    { ...fileData.file, status: 'finished' },
-  )
+  uploadSvgs.upload(fileData.file)
+
   return false
 }
 function onRemove(fileData: { index: number }) {
-  uploadSvgs.value.splice(fileData.index, 1)
+  uploadSvgs.remove(fileData.index)
+
   return true
 }
+
+watch(uploadSvgs, (svgs) => {
+// wait for next repaint
+  window.requestAnimationFrame(() => {
+    const uploadList = document.querySelectorAll('.n-upload-file--image-card-type')
+    if (uploadList?.length) {
+      Array.from(uploadList).forEach((fileDom) => {
+        fileDom.className = fileDom.className.replace(/(selected)|(shadow.+)/g, '')
+      })
+      const selectedSvgDom
+  = uploadList[svgs.selectedIndex]
+
+      selectedSvgDom.className += ' shadow-highlight-animate '
+      setTimeout(() => {
+        selectedSvgDom.className = selectedSvgDom.className.replace(/shadow.+/, '')
+        selectedSvgDom.className += ' selected'
+      }, 400)
+    }
+  })
+})
 </script>
 
 <template>
@@ -27,11 +48,12 @@ function onRemove(fileData: { index: number }) {
     :file-list="uploadSvgs.value"
     @before-upload="onBeforeUpload"
     @remove="onRemove"
+    @preview="uploadSvgs.preview"
   />
 </template>
 
 <style  lang="less">
-.n-upload-trigger.n-upload-trigger--image-card {
+  .n-upload-trigger.n-upload-trigger--image-card {
     order: -1;
 
     .n-upload-dragger {
@@ -46,6 +68,11 @@ function onRemove(fileData: { index: number }) {
     &:hover {
       background-color: var(--color-bg-thumbnail-hover);
     }
+
+    &.selected {
+      border-color: var(--color-primary)
+    }
+
   }
 
   .n-upload-file-info__action.n-upload-file-info__action--image-card-type {

@@ -6,15 +6,26 @@ import mermaid from 'mermaid'
 let viz: Viz | undefined
 
 function initSvgDom(svg: string) {
+  const rootClass = 'svg-virtual-container'
+  let root = document.querySelector(`.${rootClass}`)
+
+  if (!root) {
+    root = document.createElement('div')
+    Object.assign((root as HTMLElement).style, {
+      position: 'fixed',
+      top: '-10000px',
+    })
+    document.body.appendChild(root)
+  }
+
+  root.className = rootClass
+  root.innerHTML = ''
+
   const container = document.createElement('div')
-  Object.assign(container.style, {
-    position: 'fixed',
-    top: '-10000px',
-  })
 
   const svgDom = new DOMParser().parseFromString(svg, 'image/svg+xml').querySelector('svg')!
   container.appendChild(svgDom)
-  document.body.appendChild(container)
+  root.appendChild(container)
 
   return svgDom
 }

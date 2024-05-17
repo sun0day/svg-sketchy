@@ -5,9 +5,6 @@ import svgPanZoom from 'svg-pan-zoom'
 import { useUploadSvgs } from '../store'
 
 const svgs = useUploadSvgs()
-const selectedSvg = computed(() => {
-  return svgs.value[0]
-})
 
 function computeSvgPreviewSize(svg: SVGSVGElement, container: HTMLElement) {
   const svgSize = svg.getBoundingClientRect()
@@ -38,8 +35,9 @@ function computeSvgPreviewSize(svg: SVGSVGElement, container: HTMLElement) {
   }
 }
 
-watch(selectedSvg, async (fileData) => {
-  const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await fileData.file!.text() }]))[0]
+watch(svgs, async (fileData) => {
+  const selectedSvg = fileData.selectedSvg
+  const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await selectedSvg?.file!.text() }]))[0]
   const sketchedDom = (sketchResult as PromiseFulfilledResult<SVGSVGElement>).value
 
   const root = document.getElementById('svg-preview')!
