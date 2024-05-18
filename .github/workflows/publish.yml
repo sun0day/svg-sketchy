@@ -39,6 +39,6 @@ jobs:
           git add .
           git commit -m "chore: bump versions"
           git switch -c main
-          git push
+          git push --set-upstream origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
