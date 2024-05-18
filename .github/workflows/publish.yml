@@ -41,7 +41,7 @@ jobs:
           git add .
           git commit -m "chore: bump versions"
           git switch -c chore/bumpVersions
-          git push --set-upstream origin chore/bumpVersions
-          gh pr create -B main -H chore/bumpVersions --title "chore: bump versions"
+          git push --set-upstream origin chore/bumpVersions --force
+          gh pr create -B main -H chore/bumpVersions --title "chore: bump versions" --body "bump versions after release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
