@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "private": false,
   "description": "CLI to sketch svg",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sun0day/svg-sketchy.git"
+  },
   "exports": {
     ".": {
       "default": {
