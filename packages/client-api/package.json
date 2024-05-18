@@ -5,8 +5,11 @@
   "private": false,
   "module": "./dist/svg-sketchy.js",
   "types": "./types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
   "scripts": {
-    "dev": "vite",
     "build:ts": "tsc",
     "build": "tsc && vite build",
     "preview": "vite preview"

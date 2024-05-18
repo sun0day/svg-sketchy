@@ -30,6 +30,7 @@ const fillStyleOptions = ['hachure', 'solid', 'zigzag', 'cross-hatch', 'dots', '
         <NSwitch v-model:value="sketchOptions.value.randomize" />
       </NFormItem>
       <NFormItem label="cursive font">
+        <!-- @vue-expect-error null value type works -->
         <NSwitch v-model:value="sketchOptions.value.fontFamily" :unchecked-value="null" checked-value="Comic Sans MS, cursive" />
       </NFormItem>
       <NFormItem label="pencil filter">
