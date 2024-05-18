@@ -5,7 +5,7 @@
   "private": false,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsc && vite build --base=svg-sketchy",
     "preview": "vite preview"
   },
   "dependencies": {
