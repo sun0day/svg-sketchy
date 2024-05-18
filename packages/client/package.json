@@ -18,7 +18,7 @@
     "naive-ui": "^2.38.2",
     "pinia": "^2.1.7",
     "svg-pan-zoom": "^3.6.1",
-    "svg-sketchy.client-api": "workspace: *",
+    "svg-sketchy.client-api": "workspace:0.1.0-beta.0",
     "typescript": "^5.0.2",
     "unocss": "^0.60.0",
     "vfonts": "^0.0.3",
