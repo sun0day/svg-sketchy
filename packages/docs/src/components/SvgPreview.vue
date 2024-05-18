@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { sketchSvg } from 'svg-sketchy.client-api'
-import { computed, watch } from 'vue'
+import { cloneSvg, sketchSvg } from 'svg-sketchy.client-api'
+import { watch } from 'vue'
 import svgPanZoom from 'svg-pan-zoom'
-import { useRefreshSvg, useSketchOptions, useUploadSvgs } from '../store'
+import { useRefreshSvg, useSketchOptions, useSvgOutput, useUploadSvgs } from '../store'
 import IconToolkit from './IconToolkit.vue'
 
 const svgs = useUploadSvgs()
 const sketchOptions = useSketchOptions()
 const refresher = useRefreshSvg()
+const svgOutput = useSvgOutput()
 
 function computeSvgPreviewSize(svg: SVGSVGElement, [containerWidth, containerHeight]: number[]) {
   const svgSize = svg.getBoundingClientRect()
@@ -39,6 +40,11 @@ watch([svgs, sketchOptions, refresher], async ([nextSvgs, nextOptions]) => {
   const selectedSvg = nextSvgs.selectedSvg
   const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await selectedSvg?.file!.text() }], nextOptions.value))[0]
   const sketchedDom = (sketchResult as PromiseFulfilledResult<SVGSVGElement>).value
+
+  svgOutput.value = {
+    svg: sketchedDom && cloneSvg(sketchedDom),
+    file: selectedSvg.name,
+  }
 
   const root = document.getElementById('svg-preview')!
   const container = root.querySelector('.svg-container')! as HTMLDivElement

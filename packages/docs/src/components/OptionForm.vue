@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref } from 'vue'
 import type { FormInst } from 'naive-ui'
-import { NButton, NCheckbox, NColorPicker, NForm, NFormItem, NIcon, NInputNumber, NScrollbar, NSelect, NSwitch } from 'naive-ui'
+import { NColorPicker, NForm, NFormItem, NInputNumber, NScrollbar, NSelect, NSwitch } from 'naive-ui'
 import { useSketchOptions, useToolVisible } from '../store'
 
 const sketchOptions = useSketchOptions()
@@ -9,10 +9,6 @@ const formRef = ref<FormInst | null>(null)
 const toolVisible = useToolVisible()
 const fillStyleOptions = ['hachure', 'solid', 'zigzag', 'cross-hatch', 'dots', 'dashed', 'zigzag-line']
   .map(style => ({ label: style, value: style }))
-
-watch(sketchOptions, (options) => {
-  console.log(options.value)
-})
 </script>
 
 <template>

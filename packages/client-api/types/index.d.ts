@@ -4,6 +4,7 @@ export type SketchOptions = Pick<Svg2Roughjs, 'fontFamily' | 'roughConfig' | 'ra
 export function initialize(): void
 export function createSvgSketcher(config?: SketchOptions): Svg2Roughjs
 export const downloadSvg: (svg: SVGSVGElement, filename: string) => void
+export const cloneSvg: (svg: SVGSVGElement) => SVGSVGElement
 export const sketchSvg: (svgInputs: Window['SVG_FILES'], options?: SketchOptions) => Promise<PromiseSettledResult<SVGSVGElement | null>[]>
 export const fetchSvg: (url: string) => Promise<Blob>
 

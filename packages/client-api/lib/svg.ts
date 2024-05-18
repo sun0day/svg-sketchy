@@ -62,6 +62,13 @@ export function downloadSvg(svg: SVGSVGElement, filename: string) {
   document.body.removeChild(aDom)
 }
 
+// clone svg
+export function cloneSvg(svg: SVGSVGElement) {
+  const svgStr = svg.outerHTML
+
+  return new DOMParser().parseFromString(svgStr, 'image/svg+xml').querySelector('svg')
+}
+
 // fetch svg
 export function fetchSvg(url: string) {
   return fetch(url).then(res => res.blob())

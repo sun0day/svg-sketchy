@@ -1,7 +1,7 @@
 import type { UploadFileInfo } from 'naive-ui'
 import { defineStore } from 'pinia'
 import type { SketchOptions } from 'svg-sketchy.client-api'
-import { fetchSvg } from 'svg-sketchy.client-api'
+import { downloadSvg, fetchSvg } from 'svg-sketchy.client-api'
 import vscodeSvg from './assets/vscode.svg'
 import mindSvg from './assets/mind.svg'
 import gitSvg from './assets/github.svg'
@@ -104,6 +104,23 @@ export const useToolVisible = defineStore('tool-visible', {
   actions: {
     toggleSettings() {
       this.value.settings = !this.value.settings
+    },
+  },
+})
+
+export const useSvgOutput = defineStore('svg-output', {
+  state: () => {
+    return {
+      value: {
+        svg: null as SVGSVGElement | null,
+        file: '',
+      },
+    }
+  },
+  actions: {
+    download() {
+      if (this.value.svg)
+        downloadSvg(this.value.svg, this.value.file)
     },
   },
 })
