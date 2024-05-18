@@ -1,15 +1,11 @@
-import { fileURLToPath } from 'node:url'
-import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import UnoCSS from 'unocss/vite'
 
+// https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [vue(), UnoCSS()],
   build: {
-    lib: {
-      formats: ['iife'],
-      entry: resolve(fileURLToPath(import.meta.url), '../src/main.ts'),
-      name: 'SVG_SKETCHY',
-      // the proper extensions will be added
-      fileName: 'svg-sketchy',
-    },
+    outDir: '../../docs',
   },
 })

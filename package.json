@@ -2,10 +2,12 @@
   "name": "root",
   "type": "module",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "build:all": "pnpm --filter=\"svg-sketchy*\" run build",
-    "dev": "pnpm --filter=\"svg-sketchy\" run dev",
+    "build:docs": "pnpm --filter=\"svg-sketchy.client\" run build",
+    "dev": "pnpm --filter=\"svg-sketchy*\" run dev",
+    "dev:docs": "pnpm --filter=\"svg-sketchy.client\" run dev",
     "lint": "eslint .",
     "test": "vitest --watch=false --config ./vitest.config.ts",
     "test:watch": "vitest --watch --config ./vitest.config.ts"

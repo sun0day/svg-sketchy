@@ -1,0 +1,26 @@
+{
+  "name": "svg-sketchy.client-api",
+  "type": "module",
+  "version": "0.0.0",
+  "private": false,
+  "module": "./dist/svg-sketchy.js",
+  "types": "./types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "build:ts": "tsc",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "mermaid": "^10.9.0"
+  },
+  "devDependencies": {
+    "@viz-js/viz": "^3.4.0",
+    "svg2roughjs": "^3.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6"
+  }
+}

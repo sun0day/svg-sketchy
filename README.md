@@ -7,7 +7,7 @@
 - :pencil2: Converting svgs to [hand-drawn](https://roughjs.com/) style.
 - :four_leaf_clover: Compatible with [.dot](https://graphviz.org/doc/info/lang.html) and [.mmd](https://mermaid.js.org/ecosystem/integrations-create.html#file-extension) formats.
 
-:point_right: Try it [online](https://fskpf.github.io/)
+:point_right: Try it [online](https://sun0day.github.io/svg-sketchy)
 
 ## Install
 
@@ -42,7 +42,7 @@ Sketching `.dot` & `.mmd` files is not much different than sketching `.svg`. Sup
 
 #### customize sketch style
 
-Try it [online](https://fskpf.github.io/) to see how different sketch configs affect the final svg output.
+Try it [online](https://sun0day.github.io/svg-sketchy) to see how different sketch configs affect the final svg output.
 
 #### CLI options
 
