@@ -1,3 +1,14 @@
+## 0.1.0-beta.2
+
+### Minor Changes
+
+- chore: bump to version 0.1.0-beta.2
+
+### Patch Changes
+
+- Updated dependencies
+  - svg-sketchy.client-api@0.1.0-beta.2
+
 ## 0.1.0-beta.1
 
 ### Minor Changes
@@ -10,6 +21,7 @@
   - svg-sketchy.client-api@0.1.0-beta.1
 
 ## 0.1.0-beta.0
+
 ### Minor Changes
 
 - 540a6cb: feat: support to parse mermaid dsl

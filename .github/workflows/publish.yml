@@ -35,8 +35,8 @@ jobs:
       - name: Publish
         run: |
           pnpm changeset version
-          pnpm publish -r --filter svg-sketchy... --access public --no-git-checks
           pnpm install
+          pnpm publish -r --filter svg-sketchy... --access public --no-git-checks
       - name: Create Version PR
         run: |
           git config user.name github-actions
