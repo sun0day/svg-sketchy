@@ -35,7 +35,7 @@ jobs:
       - name: Publish
         run: |
           pnpm changeset version
-          pnpm install
+          pnpm install --frozen-lockfile=false
           pnpm publish -r --filter svg-sketchy... --access public --no-git-checks
       - name: Create Version PR
         run: |
