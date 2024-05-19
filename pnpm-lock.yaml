@@ -42,7 +42,7 @@ importers:
         specifier: ^22.6.3
         version: 22.6.3(typescript@5.4.3)
       svg-sketchy.client-api:
-        specifier: workspace:0.1.0-beta.2
+        specifier: workspace:0.1.0-beta.3
         version: link:../client-api
     devDependencies:
       chalk:
@@ -89,7 +89,7 @@ importers:
         specifier: ^3.6.1
         version: 3.6.1
       svg-sketchy.client-api:
-        specifier: workspace:0.1.0-beta.2
+        specifier: workspace:0.1.0-beta.3
         version: link:../client-api
       typescript:
         specifier: ^5.0.2
