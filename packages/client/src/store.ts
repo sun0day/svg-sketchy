@@ -26,8 +26,8 @@ export const useUploadSvgs = defineStore('upload-svgs', {
   actions: {
     async init() {
       const svgs = [
-        { id: 'git', name: 'git.svg', url: gitSvg },
         { id: 'vscode', name: 'vscode.svg', url: vscodeSvg },
+        { id: 'git', name: 'git.svg', url: gitSvg },
         { id: 'mind', name: 'mind.svg', url: mindSvg },
       ]
       const svgPromises = svgs.map(({ url }) => fetchSvg(url))
@@ -67,7 +67,7 @@ export const useSketchOptions = defineStore('sketch-options', {
     return {
       value: {
         backgroundColor: null,
-        randomize: false,
+        randomize: true,
         fontFamily: 'Comic Sans MS, cursive',
         pencilFilter: false,
         sketchPatterns: false,
@@ -75,7 +75,6 @@ export const useSketchOptions = defineStore('sketch-options', {
           fillStyle: 'hachure',
           roughness: 1,
           bowing: 1,
-          fill: 'red',
         },
       } as SketchOptions,
     }
