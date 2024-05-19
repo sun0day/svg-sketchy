@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { NButton, NFlex, NIcon } from 'naive-ui'
 import { DownloadOutline, RefreshSharp, SettingsSharp } from '@vicons/ionicons5'
-import { useRefreshSvg, useSvgOutput, useToolVisible } from '../store'
+import { useRefreshSvg, useSvgOutput, useToolVisible, useUploadSvgs } from '../store'
 
 const refresher = useRefreshSvg()
 const toolVisible = useToolVisible()
 const svgOutput = useSvgOutput()
+const svgs = useUploadSvgs()
 </script>
 
 <template>
@@ -15,12 +16,12 @@ const svgOutput = useSvgOutput()
         <SettingsSharp />
       </NIcon>
     </NButton>
-    <NButton circle size="small" class="cursor-pointer" @click="refresher.refresh">
+    <NButton v-if="svgs.selectedSvg" circle size="small" class="cursor-pointer" @click="refresher.refresh">
       <NIcon size="18">
         <RefreshSharp />
       </NIcon>
     </NButton>
-    <NButton circle size="small" class="cursor-pointer" @click="svgOutput.download">
+    <NButton v-if="svgs.selectedSvg" circle size="small" class="cursor-pointer" @click="svgOutput.download">
       <NIcon size="18">
         <DownloadOutline />
       </NIcon>

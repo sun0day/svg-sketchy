@@ -12,7 +12,7 @@ const fillStyleOptions = ['hachure', 'solid', 'zigzag', 'cross-hatch', 'dots', '
 </script>
 
 <template>
-  <NScrollbar :class="`${toolVisible.value.settings ? 'ml-0' : 'ml-[-250px]'} svg-option-form-container flex-1 max-w-[240px] p-[16px] max-h-[calc(100vh-128px)]`">
+  <NScrollbar :class="`${toolVisible.value.settings ? 'ml-0' : 'ml-[-250px]'} svg-option-form-container flex-1 max-w-[240px] min-w-[240px] p-[16px] max-h-[calc(100vh-128px)]`">
     <NForm ref="formRef" label-placement="left" size="large" class="svg-option-form">
       <NFormItem label="fill style">
         <NSelect v-model:value="sketchOptions.value.roughConfig.fillStyle" :options="fillStyleOptions" size="medium" />

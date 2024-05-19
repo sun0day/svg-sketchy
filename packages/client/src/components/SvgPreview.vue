@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cloneSvg, sketchSvg } from 'svg-sketchy.client-api'
-import { watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import svgPanZoom from 'svg-pan-zoom'
 import { useRefreshSvg, useSketchOptions, useSvgOutput, useUploadSvgs } from '../store'
 import IconToolkit from './IconToolkit.vue'
@@ -9,41 +9,37 @@ const svgs = useUploadSvgs()
 const sketchOptions = useSketchOptions()
 const refresher = useRefreshSvg()
 const svgOutput = useSvgOutput()
+const selectedSvg = computed(() => svgs.selectedSvg)
 
-function computeSvgPreviewSize(svg: SVGSVGElement, [containerWidth, containerHeight]: number[]) {
-  const svgSize = svg.getBoundingClientRect()
-  const svgRatio = svgSize.width / svgSize.height
+function setContainerSize(fit: boolean) {
+  const root = document.getElementById('svg-preview')!
+  const container = root.querySelector('.svg-container')! as HTMLDivElement
+  const rootSize = root.getBoundingClientRect()
+  const containerWidth = rootSize.width * 0.9
+  const containerHeight = rootSize.height * 0.85
 
-  return {
-    width: `${
-      Math.min(
-        containerWidth,
-        Math.max(
-          svgRatio >= 1 ? containerWidth : containerHeight * svgRatio,
-          containerWidth / 2,
-        ),
-     )
-    }px`,
-    height: `${
-      Math.min(
-          containerHeight,
-          Math.max(
-            svgRatio <= 1 ? containerHeight : containerWidth / svgRatio,
-            containerHeight / 2,
-          ),
-      )
-    }px`,
-  }
+  Object.assign(container.style, {
+    maxWidth: `${containerWidth}px`,
+    maxHeight: `${containerHeight}px`,
+    width: fit ? `${containerWidth}px` : 'auto',
+    height: fit ? `${containerHeight}px` : 'auto',
+  })
 }
 
-watch([svgs, sketchOptions, refresher], async ([nextSvgs, nextOptions]) => {
-  const selectedSvg = nextSvgs.selectedSvg
-  const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await selectedSvg?.file!.text() }], nextOptions.value))[0]
+// watch preview container resize
+onMounted(() => {
+  new ResizeObserver(() => {
+    setContainerSize(true)
+  }).observe(document.getElementById('svg-preview')!)
+})
+
+watch([selectedSvg, sketchOptions, refresher], async ([nextSelectedSvg, nextOptions]) => {
+  const sketchResult = (await sketchSvg([{ type: 'svg', dsl: await nextSelectedSvg?.file!.text() }], nextOptions.value))[0]
   const sketchedDom = (sketchResult as PromiseFulfilledResult<SVGSVGElement>).value
 
   svgOutput.value = {
     svg: sketchedDom && cloneSvg(sketchedDom),
-    file: selectedSvg.name,
+    file: nextSelectedSvg?.name,
   }
 
   const root = document.getElementById('svg-preview')!
@@ -53,26 +49,20 @@ watch([svgs, sketchOptions, refresher], async ([nextSvgs, nextOptions]) => {
   if (prevSvg)
     container.removeChild(prevSvg)
 
-  // get root size
-  const rootSize = root.getBoundingClientRect()
-  const rootWidth = rootSize.width * 0.85
-  const rootHeight = rootSize.height * 0.85
+  setContainerSize(true)
 
-  container.style.width = 'auto'
-  container.style.height = 'auto'
   container.style.background = nextOptions.value.backgroundColor || ''
 
   if (sketchedDom) {
     // add sketched dom and get sketched dom origin size
     container.appendChild(sketchedDom)
 
-    Object.assign(container.style, computeSvgPreviewSize(sketchedDom, [rootWidth, rootHeight]))
-
     const zoomInst = svgPanZoom(sketchedDom, {
-      center: true,
+      fit: false,
+      center: false,
     })
 
-    zoomInst.zoom(0.8)
+    zoomInst.zoom(0.9)
   }
 })
 </script>
@@ -86,6 +76,8 @@ watch([svgs, sketchOptions, refresher], async ([nextSvgs, nextOptions]) => {
 
 <style>
  #svg-preview .svg-container {
+   overflow: hidden;
+   color: transparent;
    svg {
      width: inherit;
      height: inherit;
