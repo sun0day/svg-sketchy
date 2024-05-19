@@ -4,4 +4,3 @@
 ---
 
 feat: support to customize sketch config
-digest
