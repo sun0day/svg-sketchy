@@ -1,3 +1,9 @@
+## 0.1.0-beta.1
+
+### Minor Changes
+
+- chore: bump to version 0.1.0-beta.1
+
 ## 0.1.0-beta.0
 
 ### Minor Changes
