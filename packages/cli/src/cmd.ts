@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Command } from 'commander'
 import type { Ora } from 'ora'
 import ora from 'ora'
