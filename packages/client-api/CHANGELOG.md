@@ -1,4 +1,4 @@
-## 0.1.0-beta.2
+# svg-sketchy changelog
 
 ## 0.1.0-beta.3
 
@@ -10,6 +10,8 @@
 - 45d4d39: feat: client & docs
 - 6e46e30: feat: support to parse dot dsl
 - 9855f0a: feat: support to customize sketch config
+
+## 0.1.0-beta.2
 
 ### Minor Changes
 
