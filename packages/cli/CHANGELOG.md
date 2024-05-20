@@ -1,4 +1,4 @@
-## 0.1.0-beta.2
+# svg-sketchy changelog
 
 ## 0.1.0-beta.3
 
@@ -20,6 +20,8 @@
 - Updated dependencies [6e46e30]
 - Updated dependencies [9855f0a]
   - svg-sketchy.client-api@0.1.0-beta.3
+
+## 0.1.0-beta.2
 
 ### Minor Changes
 

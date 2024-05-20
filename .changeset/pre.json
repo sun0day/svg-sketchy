@@ -1,0 +1,17 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "svg-sketchy": "0.1.0-beta.1",
+    "svg-sketchy.client": "0.0.0",
+    "svg-sketchy.client-api": "0.1.0-beta.1"
+  },
+  "changesets": [
+    "brave-buses-perform",
+    "bump",
+    "bump2",
+    "chatty-bikes-smoke",
+    "healthy-camels-approve",
+    "pretty-hairs-wink"
+  ]
+}
