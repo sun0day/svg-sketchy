@@ -11,7 +11,7 @@ import { NIcon } from 'naive-ui'
       </NIcon>
     </a>
 
-    <a href="https://github.com/sun0day/svg-sketchy" target="_blank">
+    <a href="https://www.npmjs.com/package/svg-sketchy" target="_blank">
       <NIcon size="24" class="icon-nav shadow-highlight">
         <LogoNpm />
       </NIcon>
