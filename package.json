@@ -28,5 +28,6 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  }
+  },
+  "LICENSE": "MIT"
 }
