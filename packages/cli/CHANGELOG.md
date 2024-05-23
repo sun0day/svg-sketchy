@@ -1,5 +1,14 @@
 # svg-sketchy changelog
 
+## 0.1.0-beta.5
+
+### Patch Changes
+
+- bc0d4ff: chore: bump versions
+  chore: add MIT License
+- Updated dependencies [bc0d4ff]
+  - svg-sketchy.client-api@0.1.0-beta.5
+
 ## 0.1.0-beta.4
 
 ### Patch Changes
