@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "private": false,
+  "license": "MIT",
   "scripts": {
     "build:all": "pnpm --filter=\"svg-sketchy*\" run build",
     "build:docs": "pnpm --filter=\"svg-sketchy.client\" run build",
@@ -28,6 +29,5 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  },
-  "LICENSE": "MIT"
+  }
 }

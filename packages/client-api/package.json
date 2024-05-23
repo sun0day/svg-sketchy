@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.1.0-beta.5",
   "private": false,
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/sun0day/svg-sketchy.git"
@@ -26,6 +27,5 @@
     "svg2roughjs": "^3.2.0",
     "typescript": "^5.2.2",
     "vite": "^5.1.6"
-  },
-  "LICENSE": "MIT"
+  }
 }

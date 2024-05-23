@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "private": false,
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build --base=svg-sketchy",
@@ -24,6 +25,5 @@
     "vfonts": "^0.0.3",
     "vite": "^4.4.5",
     "vue-tsc": "^1.8.5"
-  },
-  "LICENSE": "MIT"
+  }
 }

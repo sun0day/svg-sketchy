@@ -4,6 +4,7 @@
   "version": "0.1.0-beta.5",
   "private": false,
   "description": "CLI to sketch svg",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/sun0day/svg-sketchy.git"
@@ -37,6 +38,5 @@
     "ora": "^8.0.1",
     "svg2roughjs": "^3.2.0",
     "tsup": "^8.0.2"
-  },
-  "LICENSE": "MIT"
+  }
 }
