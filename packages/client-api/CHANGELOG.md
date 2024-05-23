@@ -1,5 +1,11 @@
 # svg-sketchy changelog
 
+## 0.1.0-beta.4
+
+### Patch Changes
+
+- 4f24268: fix(cli): declare node exec path at the top of bin file
+
 ## 0.1.0-beta.3
 
 ### Minor Changes
