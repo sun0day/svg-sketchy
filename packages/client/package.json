@@ -21,7 +21,7 @@
     "svg-pan-zoom": "^3.6.1",
     "svg-sketchy.client-api": "workspace:0.1.0-beta.6",
     "typescript": "^5.0.2",
-    "unocss": "^0.60.0",
+    "unocss": "^0.61.0",
     "vfonts": "^0.0.3",
     "vite": "^4.4.5",
     "vue-tsc": "^1.8.5"
