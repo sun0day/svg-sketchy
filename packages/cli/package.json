@@ -28,7 +28,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "puppeteer": "^22.6.3",
+    "puppeteer": "^23.0.0",
     "svg-sketchy.client-api": "workspace:0.1.0-beta.6"
   },
   "devDependencies": {
