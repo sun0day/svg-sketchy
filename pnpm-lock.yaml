@@ -10,7 +10,7 @@ importers:
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^2.16.0
-        version: 2.16.0(@vue/compiler-sfc@3.4.27)(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(less@4.2.0))
+        version: 2.16.0(@vue/compiler-sfc@3.4.27)(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0)
       '@changesets/cli':
         specifier: ^2.27.2
         version: 2.27.2
@@ -19,7 +19,7 @@ importers:
         version: 20.12.7
       '@vitest/coverage-v8':
         specifier: ^1.4.0
-        version: 1.4.0(vitest@1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(less@4.2.0))
+        version: 1.4.0(vitest@1.4.0)
       '@vitest/ui':
         specifier: ^1.4.0
         version: 1.4.0(vitest@1.4.0)
@@ -49,8 +49,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       commander:
-        specifier: ^12.0.0
-        version: 12.0.0
+        specifier: ^13.0.0
+        version: 13.0.0
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -736,6 +736,7 @@ packages:
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
+    deprecated: Use @eslint/config-array instead
 
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
@@ -743,6 +744,7 @@ packages:
 
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
+    deprecated: Use @eslint/object-schema instead
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -1572,8 +1574,8 @@ packages:
     resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
     engines: {node: '>=16'}
 
-  commander@12.0.0:
-    resolution: {integrity: sha512-MwVNWlYjDTtOjX5PiD7o5pK0UrFU/OYgcJfjjK4RaHZETNtjJqrZa9Y9ds88+A+f+d5lv+561eZ+yCKoS3gbAA==}
+  commander@13.0.0:
+    resolution: {integrity: sha512-oPYleIY8wmTVzkvQq10AEok6YcTC4sRUBl8F9gVuwchGVUCTbl/vhLTaQqutuuySYOsu8YTgV+OxKc/8Yvx+mQ==}
     engines: {node: '>=18'}
 
   commander@4.1.1:
@@ -2195,6 +2197,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -2403,6 +2406,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -2544,6 +2548,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -3451,6 +3456,7 @@ packages:
   puppeteer@22.6.3:
     resolution: {integrity: sha512-KZOnthMbvr4+7cPKFeeOCJPe8DzOKGC0GbMXmZKOP/YusXQ6sqxA0vt6frstZq3rUJ277qXHlZNFf01VVwdHKw==}
     engines: {node: '>=18'}
+    deprecated: < 22.8.2 is no longer supported
     hasBin: true
 
   queue-microtask@1.2.3:
@@ -3536,6 +3542,7 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   robust-predicates@3.0.2:
@@ -4344,7 +4351,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@antfu/eslint-config@2.16.0(@vue/compiler-sfc@3.4.27)(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(less@4.2.0))':
+  '@antfu/eslint-config@2.16.0(@vue/compiler-sfc@3.4.27)(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0)':
     dependencies:
       '@antfu/install-pkg': 0.3.3
       '@clack/prompts': 0.7.0
@@ -4368,7 +4375,7 @@ snapshots:
       eslint-plugin-toml: 0.11.0(eslint@8.57.0)
       eslint-plugin-unicorn: 52.0.0(eslint@8.57.0)
       eslint-plugin-unused-imports: 3.1.0(@typescript-eslint/eslint-plugin@7.7.1(@typescript-eslint/parser@7.7.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)
-      eslint-plugin-vitest: 0.5.4(@typescript-eslint/eslint-plugin@7.7.1(@typescript-eslint/parser@7.7.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(less@4.2.0))
+      eslint-plugin-vitest: 0.5.4(@typescript-eslint/eslint-plugin@7.7.1(@typescript-eslint/parser@7.7.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0)
       eslint-plugin-vue: 9.25.0(eslint@8.57.0)
       eslint-plugin-yml: 1.14.0(eslint@8.57.0)
       eslint-processor-vue-blocks: 0.1.2(@vue/compiler-sfc@3.4.27)(eslint@8.57.0)
@@ -5559,7 +5566,7 @@ snapshots:
       vite: 4.5.3(@types/node@20.12.7)(less@4.2.0)
       vue: 3.4.27(typescript@5.4.3)
 
-  '@vitest/coverage-v8@1.4.0(vitest@1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(less@4.2.0))':
+  '@vitest/coverage-v8@1.4.0(vitest@1.4.0)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -5999,7 +6006,7 @@ snapshots:
 
   commander@11.1.0: {}
 
-  commander@12.0.0: {}
+  commander@13.0.0: {}
 
   commander@4.1.1: {}
 
@@ -6707,7 +6714,7 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 7.7.1(@typescript-eslint/parser@7.7.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)
 
-  eslint-plugin-vitest@0.5.4(@typescript-eslint/eslint-plugin@7.7.1(@typescript-eslint/parser@7.7.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0(@types/node@20.12.7)(@vitest/ui@1.4.0)(less@4.2.0)):
+  eslint-plugin-vitest@0.5.4(@typescript-eslint/eslint-plugin@7.7.1(@typescript-eslint/parser@7.7.1(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)(vitest@1.4.0):
     dependencies:
       '@typescript-eslint/utils': 7.7.1(eslint@8.57.0)(typescript@5.4.3)
       eslint: 8.57.0
