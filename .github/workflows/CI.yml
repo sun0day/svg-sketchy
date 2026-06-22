@@ -25,7 +25,7 @@ jobs:
     name: build_test - ${{ matrix.host }} - node@${{ matrix.node }}
     runs-on: ${{ matrix.host }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v3
         with:
           version: 9
