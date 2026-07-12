@@ -17,7 +17,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "less": "^4.2.0",
     "naive-ui": "^2.38.2",
-    "pinia": "^2.1.7",
+    "pinia": "^3.0.0",
     "svg-pan-zoom": "^3.6.1",
     "svg-sketchy.client-api": "workspace:0.1.0-beta.6",
     "typescript": "^5.0.2",
